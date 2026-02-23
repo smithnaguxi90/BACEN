@@ -1,8 +1,11 @@
 <!doctype html>
-<html lang="pt-BR" class="light">
+<html lang="pt-PT" class="light">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
     <title>BACEN Ultimate - Hub de Estudos</title>
 
     <!-- Favicon e Apple Touch Icon -->
@@ -25,6 +28,8 @@
     />
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Confetti JS para Gamificação -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <!-- Google Fonts -->
     <link
       href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
@@ -79,6 +84,13 @@
         background-color: rgba(255, 255, 255, 0.05);
         color: #fff;
         border-left-color: #60a5fa;
+      }
+
+      .mob-nav-item.active {
+        color: #3b82f6;
+      }
+      .dark .mob-nav-item.active {
+        color: #60a5fa;
       }
 
       .view-section {
@@ -193,11 +205,74 @@
         background-color: #3b82f6;
         border-color: #3b82f6;
       }
+
+      /* Sidebar Collapse (Modo Foco) */
+      .sidebar-collapsed {
+        width: 5.5rem !important;
+      }
+      .sidebar-collapsed .nav-text,
+      .sidebar-collapsed .logo-text,
+      .sidebar-collapsed .menu-title {
+        display: none;
+      }
+      .sidebar-collapsed .nav-item {
+        justify-content: center;
+        padding-left: 0;
+        padding-right: 0;
+      }
+      .sidebar-collapsed .nav-item i {
+        margin-right: 0;
+        font-size: 1.25rem;
+      }
+
+      /* CSS para Impressão / Exportação a PDF */
+      @media print {
+        body * {
+          visibility: hidden;
+        }
+        #view-caderno,
+        #view-caderno * {
+          visibility: visible;
+        }
+        #view-caderno {
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 100%;
+          margin: 0;
+          padding: 0;
+        }
+        aside,
+        nav,
+        .fixed,
+        header p,
+        #form-erro-container,
+        .no-print {
+          display: none !important;
+        }
+        .print-header {
+          visibility: visible;
+          font-size: 24pt;
+          margin-bottom: 20px;
+        }
+        table {
+          border-collapse: collapse;
+          width: 100%;
+        }
+        th,
+        td {
+          border: 1px solid #cbd5e1;
+          padding: 12px;
+          font-size: 12pt;
+        }
+      }
     </style>
   </head>
   <body
-    class="flex h-screen overflow-hidden antialiased bg-slate-50 text-slate-800 dark:bg-darkBg dark:text-slate-200"
+    class="flex h-screen overflow-hidden antialiased bg-slate-50 text-slate-800 dark:bg-darkBg dark:text-slate-200 pb-16 md:pb-0"
   >
+    <!-- pb-16 for mobile bottom bar -->
+
     <!-- Loading Overlay -->
     <div
       id="loading-overlay"
@@ -206,7 +281,7 @@
       <i
         class="fa-solid fa-circle-notch fa-spin text-4xl mb-4 text-brand-400"
       ></i>
-      <p class="font-semibold tracking-wider">Conectando ao Firebase...</p>
+      <p class="font-semibold tracking-wider">A ligar à Nuvem...</p>
     </div>
 
     <!-- Toast Container -->
@@ -216,12 +291,12 @@
     ></div>
 
     <!-- Pomodoro Widget -->
-    <div class="fixed bottom-6 right-6 z-40">
+    <div class="fixed bottom-20 md:bottom-6 right-6 z-40">
       <div
         id="pomodoro-panel"
         class="bg-white dark:bg-darkCard rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 p-4 w-64 mb-4 hidden transform transition-all origin-bottom-right"
       >
-        <div class="flex justify-between items-center mb-4">
+        <div class="flex justify-between items-center mb-2">
           <h4
             class="font-bold text-slate-700 dark:text-slate-200 flex items-center gap-2"
           >
@@ -234,6 +309,31 @@
             <i class="fa-solid fa-xmark"></i>
           </button>
         </div>
+
+        <!-- Tempos Rápidos -->
+        <div
+          class="flex justify-center gap-1 mb-4 border-b border-slate-100 dark:border-slate-800 pb-3"
+        >
+          <button
+            onclick="setPomodoroTempo(25)"
+            class="text-[10px] font-bold bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 px-2 py-1 rounded"
+          >
+            25m Foco
+          </button>
+          <button
+            onclick="setPomodoroTempo(50)"
+            class="text-[10px] font-bold bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 px-2 py-1 rounded"
+          >
+            50m Foco
+          </button>
+          <button
+            onclick="setPomodoroTempo(5)"
+            class="text-[10px] font-bold bg-brand-50 dark:bg-brand-900/30 hover:bg-brand-100 dark:hover:bg-brand-800 text-brand-600 dark:text-brand-400 px-2 py-1 rounded"
+          >
+            5m Pausa
+          </button>
+        </div>
+
         <div class="text-center mb-4">
           <div
             id="pomo-time"
@@ -245,7 +345,7 @@
             id="pomo-status"
             class="text-xs font-bold uppercase text-brand-500 mt-1 tracking-widest"
           >
-            Foco Total
+            Sessão Ativa
           </div>
         </div>
         <div class="flex justify-center gap-2">
@@ -283,37 +383,47 @@
       </button>
     </div>
 
-    <!-- Sidebar -->
+    <!-- Sidebar (Desktop) -->
     <aside
-      class="w-64 bg-white dark:bg-darkCard border-r border-slate-200 dark:border-slate-800 flex flex-col hidden md:flex z-20 transition-colors"
+      id="sidebar"
+      class="w-64 bg-white dark:bg-darkCard border-r border-slate-200 dark:border-slate-800 flex-col hidden md:flex z-20 transition-all duration-300 relative"
     >
+      <!-- Modo Foco Toggle -->
+      <button
+        onclick="toggleModoFoco()"
+        class="absolute -right-3 top-8 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-400 hover:text-brand-500 rounded-full w-6 h-6 flex items-center justify-center shadow-sm z-30 transition-transform"
+        title="Modo Foco (Recolher Menu)"
+      >
+        <i class="fa-solid fa-chevron-left text-[10px]" id="icon-foco"></i>
+      </button>
+
       <div class="p-6 border-b border-slate-200 dark:border-slate-800">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center gap-3">
-            <div
-              class="w-10 h-10 rounded-lg bg-gradient-to-br from-brand-500 to-indigo-600 flex items-center justify-center text-white font-bold text-xl shadow-glow dark:shadow-darkGlow"
+        <div class="flex items-center gap-3">
+          <div
+            class="w-10 h-10 rounded-lg bg-gradient-to-br from-brand-500 to-indigo-600 flex items-center justify-center text-white font-bold text-xl shadow-glow dark:shadow-darkGlow shrink-0"
+          >
+            <i class="fa-solid fa-bolt"></i>
+          </div>
+          <div class="logo-text overflow-hidden whitespace-nowrap">
+            <h1
+              class="text-xl font-bold text-slate-800 dark:text-white tracking-tight"
             >
-              <i class="fa-solid fa-bolt"></i>
-            </div>
-            <div>
-              <h1
-                class="text-xl font-bold text-slate-800 dark:text-white tracking-tight"
-              >
-                BACEN
-              </h1>
-              <p
-                class="text-[10px] text-emerald-500 font-bold uppercase tracking-wider"
-                id="status-conexao"
-              >
-                <i class="fa-solid fa-wifi"></i> Online
-              </p>
-            </div>
+              BACEN
+            </h1>
+            <p
+              class="text-[10px] text-emerald-500 font-bold uppercase tracking-wider"
+              id="status-conexao"
+            >
+              <i class="fa-solid fa-wifi"></i> Online
+            </p>
           </div>
         </div>
       </div>
-      <nav class="flex-1 py-6 flex flex-col gap-1 px-3 overflow-y-auto">
+      <nav
+        class="flex-1 py-6 flex flex-col gap-1 px-3 overflow-y-auto overflow-x-hidden"
+      >
         <p
-          class="text-xs font-bold text-slate-400 dark:text-slate-500 px-4 mb-2 uppercase tracking-wider"
+          class="menu-title text-xs font-bold text-slate-400 dark:text-slate-500 px-4 mb-2 uppercase tracking-wider whitespace-nowrap"
         >
           Menu Principal
         </p>
@@ -322,49 +432,69 @@
           id="nav-dashboard"
           class="nav-item active rounded-lg px-4 py-3 flex items-center gap-3 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800"
         >
-          <i class="fa-solid fa-chart-pie w-5"></i>
-          <span class="font-medium">Dashboard</span>
+          <i class="fa-solid fa-chart-pie w-5 text-center"></i>
+          <span class="font-medium nav-text whitespace-nowrap"
+            >Painel Resumo</span
+          >
+        </button>
+        <button
+          onclick="navigate('revisoes')"
+          id="nav-revisoes"
+          class="nav-item rounded-lg px-4 py-3 flex items-center gap-3 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 relative"
+        >
+          <i class="fa-solid fa-brain w-5 text-center"></i>
+          <span class="font-medium nav-text whitespace-nowrap"
+            >Revisões do Dia</span
+          >
+          <span
+            id="badge-rev-desktop"
+            class="hidden absolute right-3 w-2.5 h-2.5 bg-red-500 rounded-full nav-text"
+          ></span>
         </button>
         <button
           onclick="navigate('edital')"
           id="nav-edital"
           class="nav-item rounded-lg px-4 py-3 flex items-center gap-3 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800"
         >
-          <i class="fa-solid fa-list-check w-5"></i>
-          <span class="font-medium">Edital Verticalizado</span>
+          <i class="fa-solid fa-list-check w-5 text-center"></i>
+          <span class="font-medium nav-text whitespace-nowrap">Edital</span>
         </button>
         <button
           onclick="navigate('caderno')"
           id="nav-caderno"
           class="nav-item rounded-lg px-4 py-3 flex items-center gap-3 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800"
         >
-          <i class="fa-solid fa-book-skull w-5"></i>
-          <span class="font-medium">Caderno de Erros</span>
+          <i class="fa-solid fa-book-skull w-5 text-center"></i>
+          <span class="font-medium nav-text whitespace-nowrap"
+            >Caderno de Erros</span
+          >
         </button>
         <button
           onclick="navigate('flashcards')"
           id="nav-flashcards"
           class="nav-item rounded-lg px-4 py-3 flex items-center gap-3 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800"
         >
-          <i class="fa-solid fa-layer-group w-5"></i>
-          <span class="font-medium">Flashcards</span>
+          <i class="fa-solid fa-layer-group w-5 text-center"></i>
+          <span class="font-medium nav-text whitespace-nowrap">Flashcards</span>
         </button>
         <button
           onclick="navigate('simulados')"
           id="nav-simulados"
           class="nav-item rounded-lg px-4 py-3 flex items-center gap-3 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800"
         >
-          <i class="fa-solid fa-crosshairs w-5"></i>
-          <span class="font-medium">Simulados Cebraspe</span>
+          <i class="fa-solid fa-crosshairs w-5 text-center"></i>
+          <span class="font-medium nav-text whitespace-nowrap"
+            >Provas & Simulados</span
+          >
         </button>
       </nav>
 
       <div
-        class="p-4 mt-auto border-t border-slate-200 dark:border-slate-800 flex justify-between items-center"
+        class="p-4 mt-auto border-t border-slate-200 dark:border-slate-800 flex justify-between items-center overflow-hidden"
       >
         <div
-          class="flex items-center gap-2 bg-orange-50 dark:bg-orange-900/20 px-3 py-2 rounded-lg border border-orange-100 dark:border-orange-800/30"
-          title="Dias seguidos de estudo"
+          class="flex items-center gap-2 bg-orange-50 dark:bg-orange-900/20 px-3 py-2 rounded-lg border border-orange-100 dark:border-orange-800/30 nav-text"
+          title="Ofensiva de estudos"
         >
           <i class="fa-solid fa-fire text-orange-500"></i>
           <span
@@ -373,9 +503,20 @@
             >0</span
           >
         </div>
+        <!-- Alternativa quando colapsado -->
+        <div
+          class="hidden items-center justify-center w-full icon-only-streak"
+          title="Ofensiva"
+        >
+          <span
+            class="font-extrabold text-orange-500 flex flex-col items-center text-xs"
+            ><i class="fa-solid fa-fire"></i
+            ><span id="streak-counter-mini">0</span></span
+          >
+        </div>
         <button
           onclick="toggleTheme()"
-          class="w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 flex items-center justify-center hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+          class="w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 flex items-center justify-center hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors shrink-0"
         >
           <i class="fa-solid fa-moon dark:hidden"></i>
           <i class="fa-solid fa-sun hidden dark:block text-yellow-400"></i>
@@ -383,37 +524,94 @@
       </div>
     </aside>
 
-    <!-- Mobile Header -->
+    <!-- Mobile Header (Topo) -->
     <div
-      class="md:hidden fixed top-0 w-full bg-white dark:bg-darkCard border-b border-slate-200 dark:border-slate-800 text-slate-800 dark:text-white p-4 flex justify-between items-center z-50"
+      class="md:hidden fixed top-0 w-full bg-white dark:bg-darkCard border-b border-slate-200 dark:border-slate-800 text-slate-800 dark:text-white p-4 flex justify-between items-center z-40"
     >
-      <div class="flex items-center gap-2">
-        <i class="fa-solid fa-fire text-orange-500"></i
-        ><span id="mobile-streak" class="font-bold text-orange-500">0</span>
+      <div class="flex items-center gap-2 font-bold text-lg">
+        <i class="fa-solid fa-bolt text-brand-500"></i> BACEN
       </div>
-      <select
-        id="mobile-nav"
-        onchange="navigate(this.value)"
-        class="bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-white border-none p-2 rounded-lg text-sm focus:ring-2 outline-none font-bold"
-      >
-        <option value="dashboard">Dashboard</option>
-        <option value="edital">Edital Verticalizado</option>
-        <option value="caderno">Caderno de Erros</option>
-        <option value="flashcards">Flashcards</option>
-        <option value="simulados">Simulados</option>
-      </select>
-      <button
-        onclick="toggleTheme()"
-        class="text-slate-500 dark:text-yellow-400"
-      >
-        <i class="fa-solid fa-moon dark:hidden"></i
-        ><i class="fa-solid fa-sun hidden dark:block"></i>
-      </button>
+      <div class="flex items-center gap-4">
+        <div
+          class="flex items-center gap-1 bg-orange-50 dark:bg-orange-900/30 px-2 py-1 rounded border border-orange-100 dark:border-orange-800/50"
+        >
+          <i class="fa-solid fa-fire text-orange-500 text-xs"></i
+          ><span id="mobile-streak" class="font-bold text-orange-500 text-xs"
+            >0</span
+          >
+        </div>
+        <button
+          onclick="toggleTheme()"
+          class="text-slate-500 dark:text-yellow-400"
+        >
+          <i class="fa-solid fa-moon dark:hidden"></i
+          ><i class="fa-solid fa-sun hidden dark:block"></i>
+        </button>
+      </div>
     </div>
+
+    <!-- Mobile Bottom Navigation Bar (Nativa) -->
+    <nav
+      class="md:hidden fixed bottom-0 w-full bg-white dark:bg-darkCard border-t border-slate-200 dark:border-slate-800 flex justify-around items-center pt-2 pb-safe z-50 shadow-[0_-4px_15px_rgba(0,0,0,0.05)]"
+    >
+      <button
+        onclick="navigate('dashboard')"
+        class="mob-nav-item active flex flex-col items-center p-2 text-slate-400 transition-colors"
+        id="mob-dashboard"
+      >
+        <i class="fa-solid fa-chart-pie text-xl mb-1"></i
+        ><span class="text-[9px] font-bold uppercase tracking-wider"
+          >Resumo</span
+        >
+      </button>
+      <button
+        onclick="navigate('revisoes')"
+        class="mob-nav-item flex flex-col items-center p-2 text-slate-400 transition-colors relative"
+        id="mob-revisoes"
+      >
+        <i class="fa-solid fa-brain text-xl mb-1"></i
+        ><span class="text-[9px] font-bold uppercase tracking-wider"
+          >Revisar</span
+        ><span
+          id="mob-rev-badge"
+          class="hidden absolute top-2 right-3 w-2 h-2 bg-red-500 rounded-full border border-white dark:border-darkCard"
+        ></span>
+      </button>
+      <button
+        onclick="navigate('edital')"
+        class="mob-nav-item flex flex-col items-center p-2 text-slate-400 transition-colors"
+        id="mob-edital"
+      >
+        <i class="fa-solid fa-list-check text-xl mb-1"></i
+        ><span class="text-[9px] font-bold uppercase tracking-wider"
+          >Edital</span
+        >
+      </button>
+      <button
+        onclick="navigate('caderno')"
+        class="mob-nav-item flex flex-col items-center p-2 text-slate-400 transition-colors"
+        id="mob-caderno"
+      >
+        <i class="fa-solid fa-book-skull text-xl mb-1"></i
+        ><span class="text-[9px] font-bold uppercase tracking-wider"
+          >Erros</span
+        >
+      </button>
+      <button
+        onclick="navigate('simulados')"
+        class="mob-nav-item flex flex-col items-center p-2 text-slate-400 transition-colors"
+        id="mob-simulados"
+      >
+        <i class="fa-solid fa-crosshairs text-xl mb-1"></i
+        ><span class="text-[9px] font-bold uppercase tracking-wider"
+          >Provas</span
+        >
+      </button>
+    </nav>
 
     <!-- Main Content -->
     <main
-      class="flex-1 p-4 md:p-8 overflow-y-auto mt-16 md:mt-0 relative w-full h-full scroll-smooth"
+      class="flex-1 p-4 pt-20 md:pt-8 md:p-8 overflow-y-auto relative w-full h-full scroll-smooth"
     >
       <!-- ================= DASHBOARD ================= -->
       <section
@@ -431,10 +629,11 @@
               Aqui está o resumo da sua operação BACEN hoje.
             </p>
           </div>
-          <!-- Revisões Inteligentes Alert -->
+          <!-- Alerta de Revisão -->
           <div
             id="revisao-alert"
-            class="hidden bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-200 dark:border-indigo-800 rounded-xl p-4 flex items-center gap-4 animate-pulse"
+            class="hidden bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-200 dark:border-indigo-800 rounded-xl p-4 flex items-center gap-4 animate-pulse cursor-pointer hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-colors"
+            onclick="navigate('revisoes')"
           >
             <div
               class="w-10 h-10 bg-indigo-100 dark:bg-indigo-800 text-indigo-600 dark:text-indigo-300 rounded-full flex items-center justify-center text-xl shrink-0"
@@ -443,18 +642,13 @@
             </div>
             <div>
               <p class="text-sm font-bold text-indigo-900 dark:text-indigo-200">
-                Revisão Espaçada Pendente!
+                Revisões Pendentes!
               </p>
               <p class="text-xs text-indigo-700 dark:text-indigo-400">
-                Você tem tópicos precisando de revisão hoje.
+                Clique para rever os tópicos de hoje.
               </p>
             </div>
-            <button
-              onclick="navigate('edital')"
-              class="ml-auto bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition-colors"
-            >
-              Ver Agora
-            </button>
+            <i class="fa-solid fa-chevron-right ml-auto text-indigo-400"></i>
           </div>
         </div>
 
@@ -529,7 +723,6 @@
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <!-- Progresso Macro -->
           <div
             class="bg-white dark:bg-darkCard p-6 rounded-2xl shadow-soft border border-slate-100 dark:border-slate-800 lg:col-span-2"
           >
@@ -539,8 +732,6 @@
             </h3>
             <div class="space-y-6" id="progress-container"></div>
           </div>
-
-          <!-- Gráfico de Erros -->
           <div
             class="bg-white dark:bg-darkCard p-6 rounded-2xl shadow-soft border border-slate-100 dark:border-slate-800 flex flex-col"
           >
@@ -566,6 +757,39 @@
         </div>
       </section>
 
+      <!-- ================= REVISÕES DO DIA ================= -->
+      <section id="view-revisoes" class="view-section w-full max-w-7xl mx-auto">
+        <header class="mb-8">
+          <h2 class="text-2xl md:text-3xl font-extrabold tracking-tight">
+            Revisões Programadas
+          </h2>
+          <p class="text-slate-500 dark:text-slate-400 mt-1">
+            O algoritmo filtrou os tópicos que atingiram a curva de esquecimento
+            hoje.
+          </p>
+        </header>
+
+        <div
+          id="revisoes-vazio"
+          class="hidden text-center py-20 bg-white dark:bg-darkCard rounded-2xl border border-dashed border-slate-200 dark:border-slate-700"
+        >
+          <i
+            class="fa-solid fa-mug-hot text-6xl text-slate-200 dark:text-slate-700 mb-4"
+          ></i>
+          <p class="text-slate-500 font-bold text-lg">Tudo em dia!</p>
+          <p class="text-slate-400 text-sm">
+            Não há revisões pendentes para hoje. Excelente trabalho.
+          </p>
+        </div>
+
+        <div
+          class="grid grid-cols-1 md:grid-cols-2 gap-4"
+          id="revisoes-lista-container"
+        >
+          <!-- Preenchido via JS -->
+        </div>
+      </section>
+
       <!-- ================= EDITAL VERTICALIZADO ================= -->
       <section id="view-edital" class="view-section w-full max-w-7xl mx-auto">
         <header
@@ -576,7 +800,7 @@
               Edital Verticalizado
             </h2>
             <p class="text-slate-500 dark:text-slate-400 mt-1">
-              Marque o que estudou. O sistema cuida das revisões.
+              Registe o avanço. O sistema agenda as revisões automaticamente.
             </p>
           </div>
           <div class="flex gap-2">
@@ -602,23 +826,44 @@
 
       <!-- ================= CADERNO DE ERROS ================= -->
       <section id="view-caderno" class="view-section w-full max-w-7xl mx-auto">
-        <header class="mb-6 flex justify-between items-end">
+        <header
+          class="mb-6 flex flex-col md:flex-row justify-between md:items-end gap-4"
+        >
           <div>
-            <h2 class="text-2xl md:text-3xl font-extrabold">
+            <h2 class="text-2xl md:text-3xl font-extrabold print-header">
               Caderno de Erros
             </h2>
+            <p class="text-slate-500 dark:text-slate-400 mt-1 no-print">
+              Registe os tropeções para não cair novamente na prova.
+            </p>
           </div>
-          <button
-            onclick="toggleFormErro()"
-            class="bg-brand-600 hover:bg-brand-700 text-white px-5 py-2.5 rounded-xl shadow-md text-sm font-semibold transition-colors"
-          >
-            <i class="fa-solid fa-plus mr-2"></i> Novo Registro
-          </button>
+          <div class="flex flex-wrap gap-3 no-print">
+            <select
+              id="filtro-disciplina"
+              onchange="renderTabelaErros()"
+              class="border border-slate-200 dark:border-slate-700 bg-white dark:bg-darkCard text-slate-700 dark:text-slate-300 rounded-xl px-4 py-2.5 text-sm font-semibold outline-none focus:ring-2 focus:ring-brand-500 shadow-sm"
+            >
+              <option value="todas">Todas as Disciplinas</option>
+              <!-- Options inseridas via JS -->
+            </select>
+            <button
+              onclick="window.print()"
+              class="bg-slate-800 hover:bg-slate-900 text-white px-5 py-2.5 rounded-xl shadow-md text-sm font-semibold transition-colors"
+            >
+              <i class="fa-solid fa-print mr-2"></i> Exportar
+            </button>
+            <button
+              onclick="toggleFormErro()"
+              class="bg-brand-600 hover:bg-brand-700 text-white px-5 py-2.5 rounded-xl shadow-md text-sm font-semibold transition-colors"
+            >
+              <i class="fa-solid fa-plus mr-2"></i> Adicionar
+            </button>
+          </div>
         </header>
 
         <div
           id="form-erro-container"
-          class="bg-white dark:bg-darkCard p-6 rounded-2xl shadow-soft border border-slate-100 dark:border-slate-800 mb-8 hidden"
+          class="bg-white dark:bg-darkCard p-6 rounded-2xl shadow-soft border border-slate-100 dark:border-slate-800 mb-8 hidden no-print"
         >
           <form id="erro-form" onsubmit="salvarErro(event)">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
@@ -627,17 +872,19 @@
                 required
                 class="border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-brand-500"
               >
-                <option value="" disabled selected>Disciplina...</option>
-                <option value="engsoft">Engenharia de Software</option>
-                <option value="bd">Bancos de Dados</option>
+                <option value="" disabled selected>
+                  Escolha a Disciplina...
+                </option>
                 <option value="portugues">Língua Portuguesa</option>
-                <option value="admin">Direito Administrativo</option>
+                <option value="bd">Bancos de Dados</option>
+                <option value="engsoft">Engenharia de Software</option>
                 <option value="gestao">Gestão em TI</option>
+                <option value="admin">Direito Administrativo</option>
               </select>
               <input
                 type="text"
                 id="input-topico"
-                placeholder="Tópico Específico (ex: Scrum)"
+                placeholder="Tópico (ex: Crase, SQL...)"
                 required
                 class="border border-slate-200 dark:border-slate-700 bg-transparent rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-brand-500"
               />
@@ -647,14 +894,14 @@
                 id="input-pegadinha"
                 rows="3"
                 required
-                placeholder="A Pegadinha (Como a banca te enganou)..."
+                placeholder="Como a banca tentou enganar..."
                 class="border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-900/10 rounded-xl p-3 text-sm outline-none text-red-900 dark:text-red-300 focus:ring-2 focus:ring-red-500"
               ></textarea>
               <textarea
                 id="input-regra"
                 rows="3"
                 required
-                placeholder="A Regra (A verdade absoluta)... Use **negrito**"
+                placeholder="Qual é a Regra de Ouro correta? (Use **negrito** para destacar)"
                 class="border border-emerald-200 dark:border-emerald-900/50 bg-emerald-50 dark:bg-emerald-900/10 rounded-xl p-3 text-sm outline-none text-emerald-900 dark:text-emerald-300 focus:ring-2 focus:ring-emerald-500"
               ></textarea>
             </div>
@@ -672,7 +919,7 @@
                 type="submit"
                 class="px-6 py-2.5 bg-brand-600 text-white rounded-xl hover:bg-brand-700 text-sm font-bold shadow-md transition-colors"
               >
-                Salvar no Banco
+                Salvar no Cofre
               </button>
             </div>
           </form>
@@ -690,20 +937,20 @@
                   <th
                     class="px-5 py-4 font-bold text-xs text-slate-400 uppercase"
                   >
-                    Disciplina/Tópico
+                    Tópico
                   </th>
                   <th
                     class="px-5 py-4 font-bold text-xs text-slate-400 uppercase w-1/3"
                   >
-                    Pegadinha
+                    A Pegadinha
                   </th>
                   <th
                     class="px-5 py-4 font-bold text-xs text-slate-400 uppercase w-1/3"
                   >
-                    Regra Ouro
+                    A Regra Ouro
                   </th>
                   <th
-                    class="px-5 py-4 font-bold text-xs text-slate-400 uppercase text-center"
+                    class="px-5 py-4 font-bold text-xs text-slate-400 uppercase text-center no-print"
                   >
                     Ações
                   </th>
@@ -726,7 +973,7 @@
         <header class="mb-8 text-center">
           <h2 class="text-3xl font-extrabold tracking-tight">Revisão Ativa</h2>
           <p class="text-slate-500 mt-1">
-            Vire o cartão mentalmente antes de clicar para revelar a resposta.
+            Lembre-se da regra antes de virar o cartão.
           </p>
         </header>
 
@@ -735,7 +982,7 @@
             class="fa-solid fa-layer-group text-6xl text-slate-200 dark:text-slate-700 mb-4"
           ></i>
           <p class="text-slate-500 font-medium">
-            Caderno vazio. Adicione erros primeiro!
+            O baralho está vazio. Adicione erros ao Caderno!
           </p>
         </div>
 
@@ -823,7 +1070,7 @@
             onclick="toggleFormSimulado()"
             class="bg-brand-600 hover:bg-brand-700 text-white px-5 py-2.5 rounded-xl shadow-md text-sm font-semibold transition-colors"
           >
-            <i class="fa-solid fa-plus mr-2"></i> Nova Nota
+            <i class="fa-solid fa-plus mr-2"></i> Adicionar Nota
           </button>
         </header>
 
@@ -883,10 +1130,54 @@
                 type="submit"
                 class="px-6 py-2.5 bg-brand-600 text-white rounded-xl font-bold shadow-md hover:bg-brand-700 transition-colors"
               >
-                Registrar Nota Líquida
+                Registrar
               </button>
             </div>
           </form>
+        </div>
+
+        <!-- Stats Rápidas Simulados -->
+        <div class="grid grid-cols-2 gap-4 mb-6">
+          <div
+            class="bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-100 dark:border-indigo-800 rounded-xl p-4 flex items-center justify-between"
+          >
+            <div>
+              <p
+                class="text-xs font-bold text-indigo-500 dark:text-indigo-400 uppercase tracking-wider"
+              >
+                Média Geral
+              </p>
+              <p
+                class="text-3xl font-black text-indigo-700 dark:text-indigo-300"
+                id="sim-media"
+              >
+                0
+              </p>
+            </div>
+            <i
+              class="fa-solid fa-chart-line text-3xl text-indigo-200 dark:text-indigo-800"
+            ></i>
+          </div>
+          <div
+            class="bg-amber-50 dark:bg-amber-900/30 border border-amber-100 dark:border-amber-800 rounded-xl p-4 flex items-center justify-between"
+          >
+            <div>
+              <p
+                class="text-xs font-bold text-amber-500 dark:text-amber-400 uppercase tracking-wider"
+              >
+                Recorde
+              </p>
+              <p
+                class="text-3xl font-black text-amber-700 dark:text-amber-300"
+                id="sim-recorde"
+              >
+                0
+              </p>
+            </div>
+            <i
+              class="fa-solid fa-medal text-3xl text-amber-200 dark:text-amber-800"
+            ></i>
+          </div>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -904,7 +1195,7 @@
             <div
               class="p-4 border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800"
             >
-              <h3 class="font-bold">Histórico de Baterias</h3>
+              <h3 class="font-bold">Histórico</h3>
             </div>
             <div
               class="flex-1 overflow-y-auto p-4 space-y-3"
@@ -959,7 +1250,7 @@
         unsubscribeEdital,
         unsubscribeStreak;
 
-      // ORDEM DE EXIBIÇÃO DAS MATÉRIAS (Mude a ordem aqui se precisar!)
+      // ORDEM DE EXIBIÇÃO DAS MATÉRIAS
       const ORDEM_MATERIAS = ["portugues", "bd", "engsoft", "gestao", "admin"];
 
       // EDITAL COMPLETO
@@ -1258,6 +1549,15 @@
         return state;
       }
 
+      // Popular filtro do Caderno dinamicamente
+      const selectFiltro = document.getElementById("filtro-disciplina");
+      ORDEM_MATERIAS.forEach((key) => {
+        const opt = document.createElement("option");
+        opt.value = key;
+        opt.text = EDITAL_TEMPLATE[key].nome;
+        selectFiltro.appendChild(opt);
+      });
+
       window.editalState = {};
       window.cadernoDeErros = [];
       window.simulados = [];
@@ -1274,6 +1574,22 @@
             : "light",
         );
         updateChartColors();
+      };
+
+      window.toggleModoFoco = function () {
+        const sidebar = document.getElementById("sidebar");
+        sidebar.classList.toggle("sidebar-collapsed");
+        const isCollapsed = sidebar.classList.contains("sidebar-collapsed");
+        document.getElementById("icon-foco").className = isCollapsed
+          ? "fa-solid fa-chevron-right text-[10px]"
+          : "fa-solid fa-chevron-left text-[10px]";
+
+        document
+          .querySelectorAll(".icon-only-streak")
+          .forEach((el) => el.classList.toggle("hidden", !isCollapsed));
+        document
+          .querySelectorAll(".icon-only-streak")
+          .forEach((el) => el.classList.toggle("flex", isCollapsed));
       };
 
       window.onload = async function () {
@@ -1333,6 +1649,7 @@
             }
             renderEdital();
             updateDashboard();
+            renderRevisoesPainel();
             hideLoading();
           },
         );
@@ -1386,6 +1703,17 @@
         return d.toISOString().split("T")[0];
       }
 
+      function triggerGamification() {
+        if (typeof confetti === "function") {
+          confetti({
+            particleCount: 150,
+            spread: 80,
+            origin: { y: 0.6 },
+            zIndex: 1000,
+          });
+        }
+      }
+
       function checkAndUpdateStreakOnLoad() {
         const today = getTodayStr();
         const lastDate = window.streakState.lastDate;
@@ -1423,12 +1751,26 @@
           window.streakState = { count: currentCount, lastDate: today };
           salvarEstadoNuvem("streak", window.streakState);
           showToast(`Ofensiva garantida! ${currentCount} dia(s) seguidos 🔥`);
+          if (
+            currentCount === 7 ||
+            currentCount === 14 ||
+            currentCount === 30 ||
+            currentCount % 30 === 0
+          ) {
+            triggerGamification();
+            setTimeout(
+              () => showToast(`Marco Histórico: ${currentCount} dias! 🏆`),
+              1000,
+            );
+          }
           renderStreak();
         }
       };
 
       function renderStreak() {
         document.getElementById("streak-counter").innerText =
+          window.streakState.count;
+        document.getElementById("streak-counter-mini").innerText =
           window.streakState.count;
         document.getElementById("mobile-streak").innerText =
           window.streakState.count;
@@ -1451,9 +1793,10 @@
 
       window.toggleTopico = async function (materiaId, topicoId, checkbox) {
         let newState = JSON.parse(JSON.stringify(window.editalState));
-        const topico = newState[materiaId].topicos.find(
-          (t) => t.id === topicoId,
-        );
+        const materia = newState[materiaId];
+        const topico = materia.topicos.find((t) => t.id === topicoId);
+        const prevConc = materia.topicos.filter((t) => t.concluido).length;
+
         if (topico) {
           topico.concluido = checkbox.checked;
           topico.dataConc = checkbox.checked ? Date.now() : null;
@@ -1461,7 +1804,16 @@
           topico.rev30 = false;
           window.editalState = newState;
           await salvarEstadoNuvem("edital", window.editalState);
+
+          const newConc = materia.topicos.filter((t) => t.concluido).length;
           if (checkbox.checked) window.triggerActivity();
+          if (
+            newConc === materia.topicos.length &&
+            prevConc < materia.topicos.length
+          ) {
+            triggerGamification();
+            showToast(`Parabéns! Finalizou ${materia.nome}! 🏅`);
+          }
         }
       };
 
@@ -1476,11 +1828,85 @@
           window.editalState = newState;
           await salvarEstadoNuvem("edital", window.editalState);
           if (topico.rev7 || topico.rev30) {
-            showToast(`Revisão anotada! 🧠`);
+            showToast(`Revisão registada! 🧠`);
             window.triggerActivity();
           }
         }
       };
+
+      // Novo: Ecrã de Revisões do Dia
+      function renderRevisoesPainel() {
+        const container = document.getElementById("revisoes-lista-container");
+        const emptyState = document.getElementById("revisoes-vazio");
+        if (!container) return;
+        container.innerHTML = "";
+
+        let countRev = 0;
+        ORDEM_MATERIAS.forEach((mId) => {
+          const materia = window.editalState[mId];
+          if (!materia) return;
+          materia.topicos.forEach((t) => {
+            if (!t.concluido) return;
+            const daysSince = Math.floor(
+              (Date.now() - t.dataConc) / (1000 * 60 * 60 * 24),
+            );
+            let typePendente = 0;
+            if (daysSince >= 7 && !t.rev7) typePendente = 7;
+            else if (daysSince >= 30 && !t.rev30) typePendente = 30;
+
+            if (typePendente > 0) {
+              countRev++;
+              const colorClass =
+                typePendente === 7
+                  ? "text-indigo-600 bg-indigo-50 border-indigo-200"
+                  : "text-purple-600 bg-purple-50 border-purple-200";
+              const darkClass =
+                typePendente === 7
+                  ? "dark:text-indigo-300 dark:bg-indigo-900/30 dark:border-indigo-800"
+                  : "dark:text-purple-300 dark:bg-purple-900/30 dark:border-purple-800";
+
+              container.innerHTML += `
+                            <div class="bg-white dark:bg-darkCard p-4 rounded-xl shadow-sm border border-slate-100 dark:border-slate-800 flex flex-col justify-between h-full">
+                                <div>
+                                    <div class="flex items-center gap-2 mb-2"><span class="w-3 h-3 rounded-full" style="background-color: ${materia.cor}"></span><span class="text-xs font-bold uppercase tracking-wider text-slate-500">${materia.nome}</span></div>
+                                    <h4 class="font-bold text-slate-800 dark:text-slate-200 mb-4 leading-tight">${t.nome}</h4>
+                                </div>
+                                <div class="flex justify-between items-center mt-auto border-t border-slate-100 dark:border-slate-800 pt-3">
+                                    <span class="text-xs font-bold px-2 py-1 rounded-md border ${colorClass} ${darkClass}">Alvo: ${typePendente} Dias</span>
+                                    <label class="flex items-center gap-2 cursor-pointer bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 px-3 py-1.5 rounded-lg transition-colors">
+                                        <input type="checkbox" onchange="marcarRevisao('${mId}', '${t.id}', ${typePendente})" class="w-4 h-4 rounded accent-brand-500"> 
+                                        <span class="text-sm font-bold text-slate-600 dark:text-slate-300">Marcar Feito</span>
+                                    </label>
+                                </div>
+                            </div>
+                        `;
+            }
+          });
+        });
+
+        if (countRev === 0) {
+          emptyState.classList.remove("hidden");
+          container.classList.add("hidden");
+        } else {
+          emptyState.classList.add("hidden");
+          container.classList.remove("hidden");
+        }
+
+        // Atualiza Badges Notificação
+        const badgeDesk = document.getElementById("badge-rev-desktop");
+        const badgeMob = document.getElementById("mob-rev-badge");
+        const alertDash = document.getElementById("revisao-alert");
+
+        if (countRev > 0) {
+          if (badgeDesk) badgeDesk.classList.remove("hidden");
+          if (badgeMob) badgeMob.classList.remove("hidden");
+          if (alertDash) alertDash.classList.remove("hidden");
+        } else {
+          if (badgeDesk) badgeDesk.classList.add("hidden");
+          if (badgeMob) badgeMob.classList.add("hidden");
+          if (alertDash) alertDash.classList.add("hidden");
+        }
+      }
 
       function renderEdital() {
         const container = document.getElementById("edital-container");
@@ -1505,12 +1931,10 @@
 
       function updateDashboard() {
         const container = document.getElementById("progress-container");
-        const alertBox = document.getElementById("revisao-alert");
         if (!container) return;
         container.innerHTML = "";
         let tTotal = 0,
-          tConc = 0,
-          temRevisaoPendente = false;
+          tConc = 0;
         ORDEM_MATERIAS.forEach((mId) => {
           const materia = window.editalState[mId];
           if (!materia) return;
@@ -1521,15 +1945,10 @@
             if (t.concluido) {
               mConc++;
               tConc++;
-              const daysSince = Math.floor(
-                (Date.now() - t.dataConc) / (1000 * 60 * 60 * 24),
-              );
-              if (daysSince >= 7 && !t.rev7) temRevisaoPendente = true;
-              if (daysSince >= 30 && !t.rev30) temRevisaoPendente = true;
             }
           });
           const perc = mTotal > 0 ? Math.round((mConc / mTotal) * 100) : 0;
-          container.innerHTML += `<div><div class="flex justify-between items-end mb-2"><div><span class="font-bold text-sm">${materia.nome}</span><span class="text-xs text-slate-400 ml-2">${mConc}/${mTotal} Tópicos</span></div><span class="text-xs font-bold">${perc}%</span></div><div class="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-2.5 overflow-hidden"><div class="h-2.5 rounded-full transition-all" style="width: ${perc}%; background-color: ${materia.cor};"></div></div></div>`;
+          container.innerHTML += `<div><div class="flex justify-between items-end mb-2"><div><span class="font-bold text-sm">${materia.nome}</span><span class="text-xs text-slate-400 ml-2">${mConc}/${mTotal} Tópicos</span></div><span class="text-xs font-bold">${perc}%</span></div><div class="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-2.5 overflow-hidden"><div class="h-2.5 rounded-full transition-all duration-1000" style="width: ${perc}%; background-color: ${materia.cor};"></div></div></div>`;
         });
         document.getElementById("stat-aulas").innerText =
           `${tConc} / ${tTotal}`;
@@ -1537,8 +1956,6 @@
           window.cadernoDeErros.length;
         document.getElementById("stat-taxa").innerText =
           `${tTotal > 0 ? Math.round((tConc / tTotal) * 100) : 0}%`;
-        if (temRevisaoPendente) alertBox.classList.remove("hidden");
-        else alertBox.classList.add("hidden");
 
         const ctx = document.getElementById("errosChart").getContext("2d");
         let errorCount = {};
@@ -1618,7 +2035,7 @@
         );
         document.getElementById("erro-form").reset();
         window.toggleFormErro();
-        showToast("Falha rastreada!");
+        showToast("Tropeção registado!");
         window.triggerActivity();
       };
 
@@ -1648,17 +2065,30 @@
         }
       };
 
-      function renderTabelaErros() {
+      window.renderTabelaErros = function () {
         const tbody = document.getElementById("tabela-body");
         tbody.innerHTML = "";
-        window.cadernoDeErros.forEach((e) => {
+        const filtro = document.getElementById("filtro-disciplina").value;
+
+        let errosFiltrados = window.cadernoDeErros;
+        if (filtro !== "todas")
+          errosFiltrados = errosFiltrados.filter(
+            (e) => e.disciplina === filtro,
+          );
+
+        if (errosFiltrados.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="4" class="px-5 py-8 text-center text-slate-400">Nenhum erro registado.</td></tr>`;
+          return;
+        }
+
+        errosFiltrados.forEach((e) => {
           const tr = document.createElement("tr");
           tr.className =
-            "hover:bg-slate-50 dark:hover:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800";
-          tr.innerHTML = `<td class="px-5 py-4 align-top"><div class="font-bold text-sm">${e.nomeDisciplina || e.disciplina}</div><div class="text-xs opacity-70">${e.topico}</div></td><td class="px-5 py-4 align-top"><div class="p-3 bg-red-50 dark:bg-red-900/10 text-red-900 dark:text-red-300 text-sm rounded-lg border border-red-100 dark:border-red-900/30">${e.pegadinha}</div></td><td class="px-5 py-4 align-top"><div class="p-3 bg-emerald-50 dark:bg-emerald-900/10 text-emerald-900 dark:text-emerald-300 text-sm rounded-lg font-medium border border-emerald-100 dark:border-emerald-900/30">${e.regra.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")}</div></td><td class="px-5 py-4 align-top text-center"><span class="inline-block w-6 h-6 bg-slate-200 dark:bg-slate-700 rounded-full text-xs font-bold pt-1 mb-2">${e.qtd}</span><br><button onclick="incrementarErro('${e.firebaseId}', ${e.qtd})" class="text-brand-600 hover:text-brand-500 mr-2"><i class="fa-solid fa-arrow-up"></i></button><button onclick="deletarErro('${e.firebaseId}')" class="text-red-500 hover:text-red-400"><i class="fa-solid fa-trash"></i></button></td>`;
+            "hover:bg-slate-50 dark:hover:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800 transition-colors";
+          tr.innerHTML = `<td class="px-5 py-4 align-top"><div class="font-bold text-sm text-brand-600 dark:text-brand-400">${e.nomeDisciplina || e.disciplina}</div><div class="text-xs opacity-70 mt-1"><i class="fa-solid fa-angle-right mr-1"></i>${e.topico}</div></td><td class="px-5 py-4 align-top"><div class="p-3 bg-red-50 dark:bg-red-900/10 text-red-900 dark:text-red-300 text-sm rounded-lg border border-red-100 dark:border-red-900/30 leading-relaxed">${e.pegadinha}</div></td><td class="px-5 py-4 align-top"><div class="p-3 bg-emerald-50 dark:bg-emerald-900/10 text-emerald-900 dark:text-emerald-300 text-sm rounded-lg font-medium border border-emerald-100 dark:border-emerald-900/30 leading-relaxed">${e.regra.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")}</div></td><td class="px-5 py-4 align-top text-center no-print"><span class="inline-block w-6 h-6 bg-slate-200 dark:bg-slate-700 rounded-full text-xs font-bold pt-1 mb-2">${e.qtd}</span><br><button onclick="incrementarErro('${e.firebaseId}', ${e.qtd})" class="text-brand-600 hover:text-brand-500 mr-2 transition-transform hover:scale-110" title="Errei novamente"><i class="fa-solid fa-arrow-up"></i></button><button onclick="deletarErro('${e.firebaseId}')" class="text-red-500 hover:text-red-400 transition-transform hover:scale-110" title="Apagar"><i class="fa-solid fa-trash"></i></button></td>`;
           tbody.appendChild(tr);
         });
-      }
+      };
 
       window.salvarSimulado = async function (e) {
         e.preventDefault();
@@ -1688,12 +2118,12 @@
         );
         document.getElementById("simulado-form").reset();
         window.toggleFormSimulado();
-        showToast(`Treino salvo!`);
+        showToast(`Registo salvo!`);
         window.triggerActivity();
       };
 
       window.deletarSimulado = async function (id) {
-        if (confirm("Descartar nota?")) {
+        if (confirm("Descartar este registo?")) {
           if (currentUser)
             await deleteDoc(
               doc(
@@ -1712,11 +2142,26 @@
       function renderSimulados() {
         const lista = document.getElementById("simulados-lista");
         lista.innerHTML = "";
+
+        let maxNota = -999;
+        let soma = 0;
         window.simulados.forEach((s) => {
+          if (s.notaLiquida > maxNota) maxNota = s.notaLiquida;
+          soma += s.notaLiquida;
           lista.innerHTML =
-            `<div class="flex justify-between items-center bg-white dark:bg-darkCard p-3 border border-slate-100 dark:border-slate-800 rounded-xl shadow-sm"><div><div class="text-xs text-slate-400 font-bold">${s.data.split("-").reverse().join("/")}</div><div class="text-sm font-medium">C:${s.certas} | E:${s.erradas} | B:${s.brancos}</div></div><div class="flex items-center gap-4"><div class="text-right"><div class="text-xs opacity-70">Líquida</div><div class="font-extrabold text-xl ${s.notaLiquida > 0 ? "text-emerald-500" : "text-red-500"}">${s.notaLiquida}</div></div><button onclick="deletarSimulado('${s.firebaseId}')" class="text-slate-300 dark:text-slate-600 hover:text-red-500"><i class="fa-solid fa-trash"></i></button></div></div>` +
+            `<div class="flex justify-between items-center bg-white dark:bg-darkCard p-3 border border-slate-100 dark:border-slate-800 rounded-xl shadow-sm transition-transform hover:-translate-y-0.5"><div><div class="text-xs text-slate-400 font-bold"><i class="fa-regular fa-calendar mr-1"></i>${s.data.split("-").reverse().join("/")}</div><div class="text-sm font-medium mt-1">C:${s.certas} | E:${s.erradas} | B:${s.brancos}</div></div><div class="flex items-center gap-4"><div class="text-right"><div class="text-[10px] uppercase font-bold text-slate-400 tracking-widest">Líquida</div><div class="font-extrabold text-xl ${s.notaLiquida > 0 ? "text-emerald-500" : "text-red-500"}">${s.notaLiquida}</div></div><button onclick="deletarSimulado('${s.firebaseId}')" class="text-slate-300 dark:text-slate-600 hover:text-red-500 transition-colors p-2"><i class="fa-solid fa-trash"></i></button></div></div>` +
             lista.innerHTML;
         });
+
+        // Stats
+        const media =
+          window.simulados.length > 0
+            ? (soma / window.simulados.length).toFixed(1)
+            : 0;
+        document.getElementById("sim-media").innerText = media;
+        document.getElementById("sim-recorde").innerText =
+          maxNota === -999 ? 0 : maxNota;
+
         const ctx = document.getElementById("simuladosChart").getContext("2d");
         const isDark = document.documentElement.classList.contains("dark");
         if (charts.simulados) charts.simulados.destroy();
@@ -1733,8 +2178,12 @@
                 borderColor: "#3b82f6",
                 backgroundColor: "rgba(59, 130, 246, 0.1)",
                 borderWidth: 3,
+                pointBackgroundColor: "#fff",
+                pointBorderColor: "#3b82f6",
+                pointBorderWidth: 2,
+                pointRadius: 4,
                 fill: true,
-                tension: 0.3,
+                tension: 0.4,
               },
             ],
           },
@@ -1743,17 +2192,39 @@
             maintainAspectRatio: false,
             scales: {
               x: {
-                grid: { color: isDark ? "#334155" : "#e2e8f0" },
-                ticks: { color: isDark ? "#cbd5e1" : "#475569" },
+                grid: {
+                  color: isDark ? "#334155" : "#e2e8f0",
+                  drawBorder: false,
+                },
+                ticks: {
+                  color: isDark ? "#cbd5e1" : "#475569",
+                  font: { family: "'Plus Jakarta Sans'" },
+                },
               },
               y: {
                 beginAtZero: true,
-                grid: { color: isDark ? "#334155" : "#e2e8f0" },
-                ticks: { color: isDark ? "#cbd5e1" : "#475569" },
+                grid: {
+                  color: isDark ? "#334155" : "#e2e8f0",
+                  drawBorder: false,
+                },
+                ticks: {
+                  color: isDark ? "#cbd5e1" : "#475569",
+                  font: { family: "'Plus Jakarta Sans'" },
+                },
               },
             },
             plugins: {
-              legend: { labels: { color: isDark ? "#cbd5e1" : "#475569" } },
+              legend: { display: false },
+              tooltip: {
+                backgroundColor: isDark ? "#1e293b" : "#fff",
+                titleColor: isDark ? "#fff" : "#1e293b",
+                bodyColor: isDark ? "#cbd5e1" : "#475569",
+                borderColor: isDark ? "#334155" : "#e2e8f0",
+                borderWidth: 1,
+                padding: 10,
+                cornerRadius: 8,
+                displayColors: false,
+              },
             },
           },
         });
@@ -1820,17 +2291,24 @@
           .querySelectorAll(".view-section")
           .forEach((el) => el.classList.remove("active"));
         document
-          .querySelectorAll("aside nav button")
+          .querySelectorAll(".nav-item")
           .forEach((el) => el.classList.remove("active"));
+        document
+          .querySelectorAll(".mob-nav-item")
+          .forEach((el) => el.classList.remove("active"));
+
         const vw = document.getElementById(`view-${viewId}`);
         if (vw) vw.classList.add("active");
         const btn = document.getElementById(`nav-${viewId}`);
         if (btn) btn.classList.add("active");
-        document.getElementById("mobile-nav").value = viewId;
+        const btnMob = document.getElementById(`mob-${viewId}`);
+        if (btnMob) btnMob.classList.add("active");
+
         if (viewId === "dashboard") updateDashboard();
         if (viewId === "edital") renderEdital();
         if (viewId === "simulados") renderSimulados();
         if (viewId === "flashcards") window.initFlashcards();
+        if (viewId === "revisoes") renderRevisoesPainel();
       };
 
       window.toggleFormErro = () =>
@@ -1844,16 +2322,60 @@
         document.getElementById("sim-data").valueAsDate = new Date();
       };
 
+      // --- SISTEMA POMODORO AVANÇADO ---
       let pomoInterval;
       let pomoTime = 1800;
+      let isPomodoroActive = false;
+
+      function tocarAlarme() {
+        try {
+          const ctx = new (window.AudioContext || window.webkitAudioContext)();
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = "sine";
+          osc.frequency.setValueAtTime(880, ctx.currentTime);
+          gain.gain.setValueAtTime(0.1, ctx.currentTime);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start();
+          osc.stop(ctx.currentTime + 0.5);
+          setTimeout(() => {
+            const osc2 = ctx.createOscillator();
+            const gain2 = ctx.createGain();
+            osc2.type = "sine";
+            osc2.frequency.setValueAtTime(880, ctx.currentTime);
+            gain2.gain.setValueAtTime(0.1, ctx.currentTime);
+            osc2.connect(gain2);
+            gain2.connect(ctx.destination);
+            osc2.start();
+            osc2.stop(ctx.currentTime + 0.5);
+          }, 600);
+        } catch (e) {
+          console.log("Alarme não suportado no dispositivo.");
+        }
+      }
+
+      window.setPomodoroTempo = (minutos) => {
+        window.pausePomodoro();
+        pomoTime = minutos * 60;
+        const m = Math.floor(pomoTime / 60)
+          .toString()
+          .padStart(2, "0");
+        const s = (pomoTime % 60).toString().padStart(2, "0");
+        document.getElementById("pomo-time").innerText = `${m}:${s}`;
+        document.getElementById("pomo-status").innerText =
+          minutos === 5 ? "Pausa Curta" : "Foco Total";
+      };
+
       window.togglePomodoro = () => {
         const p = document.getElementById("pomodoro-panel");
         p.classList.toggle("hidden");
-        if (p.classList.contains("hidden") && pomoInterval)
+        if (p.classList.contains("hidden") && isPomodoroActive)
           document.getElementById("pomo-indicator").classList.remove("hidden");
         else document.getElementById("pomo-indicator").classList.add("hidden");
       };
       window.startPomodoro = () => {
+        isPomodoroActive = true;
         document.getElementById("pomo-start").classList.add("hidden");
         document.getElementById("pomo-pause").classList.remove("hidden");
         document.getElementById("pomo-indicator").classList.remove("hidden");
@@ -1867,12 +2389,15 @@
             document.getElementById("pomo-time").innerText = `${m}:${s}`;
           } else {
             window.pausePomodoro();
-            window.showToast("Tempo esgotado! Descanse.", "success");
+            tocarAlarme();
+            triggerGamification();
+            window.showToast("Tempo esgotado! Excelente foco.", "success");
             window.triggerActivity();
           }
         }, 1000);
       };
       window.pausePomodoro = () => {
+        isPomodoroActive = false;
         clearInterval(pomoInterval);
         document.getElementById("pomo-start").classList.remove("hidden");
         document.getElementById("pomo-pause").classList.add("hidden");
@@ -1880,8 +2405,7 @@
       };
       window.resetPomodoro = () => {
         window.pausePomodoro();
-        pomoTime = 1800;
-        document.getElementById("pomo-time").innerText = "30:00";
+        window.setPomodoroTempo(30);
       };
 
       window.showToast = function (msg, type = "success") {
