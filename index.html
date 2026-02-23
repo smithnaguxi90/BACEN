@@ -959,100 +959,11 @@
         unsubscribeEdital,
         unsubscribeStreak;
 
+      // ORDEM DE EXIBIÇÃO DAS MATÉRIAS (Mude a ordem aqui se precisar!)
+      const ORDEM_MATERIAS = ["portugues", "bd", "engsoft", "gestao", "admin"];
+
       // EDITAL COMPLETO
       const EDITAL_TEMPLATE = {
-        engsoft: {
-          nome: "Engenharia de Software",
-          cor: "#3b82f6",
-          topicos: [
-            {
-              id: "es1",
-              nome: "Metodologias Ágeis (Scrum, Kanban)",
-              concluido: false,
-              dataConc: null,
-              rev7: false,
-              rev30: false,
-            },
-            {
-              id: "es2",
-              nome: "Arquitetura (Microsserviços, API REST)",
-              concluido: false,
-              dataConc: null,
-              rev7: false,
-              rev30: false,
-            },
-            {
-              id: "es3",
-              nome: "Engenharia de Requisitos",
-              concluido: false,
-              dataConc: null,
-              rev7: false,
-              rev30: false,
-            },
-            {
-              id: "es4",
-              nome: "Testes (TDD, BDD, Unitários)",
-              concluido: false,
-              dataConc: null,
-              rev7: false,
-              rev30: false,
-            },
-            {
-              id: "es5",
-              nome: "Padrões de Projeto (GoF)",
-              concluido: false,
-              dataConc: null,
-              rev7: false,
-              rev30: false,
-            },
-          ],
-        },
-        bd: {
-          nome: "Bancos de Dados",
-          cor: "#f59e0b",
-          topicos: [
-            {
-              id: "bd1",
-              nome: "Aula 1 - Conceitos Iniciais",
-              concluido: false,
-              dataConc: null,
-              rev7: false,
-              rev30: false,
-            },
-            {
-              id: "bd2",
-              nome: "Aula 2 - Tipos de Usuários, Linguagem e Arquitetura SGBDs",
-              concluido: false,
-              dataConc: null,
-              rev7: false,
-              rev30: false,
-            },
-            {
-              id: "bd3",
-              nome: "Aula 3 - Projeto de BD",
-              concluido: false,
-              dataConc: null,
-              rev7: false,
-              rev30: false,
-            },
-            {
-              id: "bd4",
-              nome: "Aula 4 - Evolução dos BDs",
-              concluido: false,
-              dataConc: null,
-              rev7: false,
-              rev30: false,
-            },
-            {
-              id: "bd5",
-              nome: "Aula 5 - MER (Modelo Entidade Relacionamento)",
-              concluido: false,
-              dataConc: null,
-              rev7: false,
-              rev30: false,
-            },
-          ],
-        },
         portugues: {
           nome: "Língua Portuguesa",
           cor: "#10b981",
@@ -1231,6 +1142,98 @@
             },
           ],
         },
+        engsoft: {
+          nome: "Engenharia de Software",
+          cor: "#3b82f6",
+          topicos: [
+            {
+              id: "es1",
+              nome: "Metodologias Ágeis (Scrum, Kanban)",
+              concluido: false,
+              dataConc: null,
+              rev7: false,
+              rev30: false,
+            },
+            {
+              id: "es2",
+              nome: "Arquitetura (Microsserviços, API REST)",
+              concluido: false,
+              dataConc: null,
+              rev7: false,
+              rev30: false,
+            },
+            {
+              id: "es3",
+              nome: "Engenharia de Requisitos",
+              concluido: false,
+              dataConc: null,
+              rev7: false,
+              rev30: false,
+            },
+            {
+              id: "es4",
+              nome: "Testes (TDD, BDD, Unitários)",
+              concluido: false,
+              dataConc: null,
+              rev7: false,
+              rev30: false,
+            },
+            {
+              id: "es5",
+              nome: "Padrões de Projeto (GoF)",
+              concluido: false,
+              dataConc: null,
+              rev7: false,
+              rev30: false,
+            },
+          ],
+        },
+        bd: {
+          nome: "Bancos de Dados",
+          cor: "#f59e0b",
+          topicos: [
+            {
+              id: "bd1",
+              nome: "Aula 1 - Conceitos Iniciais",
+              concluido: false,
+              dataConc: null,
+              rev7: false,
+              rev30: false,
+            },
+            {
+              id: "bd2",
+              nome: "Aula 2 - Tipos de Usuários, Linguagem e Arquitetura SGBDs",
+              concluido: false,
+              dataConc: null,
+              rev7: false,
+              rev30: false,
+            },
+            {
+              id: "bd3",
+              nome: "Aula 3 - Projeto de BD",
+              concluido: false,
+              dataConc: null,
+              rev7: false,
+              rev30: false,
+            },
+            {
+              id: "bd4",
+              nome: "Aula 4 - Evolução dos BDs",
+              concluido: false,
+              dataConc: null,
+              rev7: false,
+              rev30: false,
+            },
+            {
+              id: "bd5",
+              nome: "Aula 5 - MER (Modelo Entidade Relacionamento)",
+              concluido: false,
+              dataConc: null,
+              rev7: false,
+              rev30: false,
+            },
+          ],
+        },
       };
 
       function syncEdital(savedState) {
@@ -1312,7 +1315,6 @@
               const dadosNuvem = docSnap.data();
               window.editalState = syncEdital(dadosNuvem);
 
-              // AUTO-ATUALIZAÇÃO: Se o código (EDITAL_TEMPLATE) tiver aulas novas que não estão na nuvem, ele atualiza o Firebase automaticamente!
               if (
                 JSON.stringify(dadosNuvem) !==
                 JSON.stringify(window.editalState)
@@ -1484,7 +1486,9 @@
         const container = document.getElementById("edital-container");
         if (!container) return;
         container.innerHTML = "";
-        for (const [mId, materia] of Object.entries(window.editalState)) {
+        ORDEM_MATERIAS.forEach((mId) => {
+          const materia = window.editalState[mId];
+          if (!materia) return;
           let topicosHtml = "";
           let concluidos = 0;
           materia.topicos.forEach((t) => {
@@ -1496,7 +1500,7 @@
                         </div>`;
           });
           container.innerHTML += `<div class="bg-white dark:bg-darkCard rounded-2xl shadow-soft border border-slate-100 dark:border-slate-800 overflow-hidden"><div class="px-5 py-4 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 flex justify-between items-center"><h3 class="font-bold text-slate-800 dark:text-white flex items-center gap-2"><span class="w-3 h-3 rounded-full" style="background-color: ${materia.cor}"></span> ${materia.nome}</h3><span class="text-xs font-bold text-slate-500">${concluidos}/${materia.topicos.length}</span></div><div class="p-2">${topicosHtml}</div></div>`;
-        }
+        });
       }
 
       function updateDashboard() {
@@ -1507,7 +1511,9 @@
         let tTotal = 0,
           tConc = 0,
           temRevisaoPendente = false;
-        for (const [mId, materia] of Object.entries(window.editalState)) {
+        ORDEM_MATERIAS.forEach((mId) => {
+          const materia = window.editalState[mId];
+          if (!materia) return;
           let mTotal = materia.topicos.length;
           let mConc = 0;
           materia.topicos.forEach((t) => {
@@ -1524,7 +1530,7 @@
           });
           const perc = mTotal > 0 ? Math.round((mConc / mTotal) * 100) : 0;
           container.innerHTML += `<div><div class="flex justify-between items-end mb-2"><div><span class="font-bold text-sm">${materia.nome}</span><span class="text-xs text-slate-400 ml-2">${mConc}/${mTotal} Tópicos</span></div><span class="text-xs font-bold">${perc}%</span></div><div class="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-2.5 overflow-hidden"><div class="h-2.5 rounded-full transition-all" style="width: ${perc}%; background-color: ${materia.cor};"></div></div></div>`;
-        }
+        });
         document.getElementById("stat-aulas").innerText =
           `${tConc} / ${tTotal}`;
         document.getElementById("stat-erros").innerText =
@@ -1544,13 +1550,14 @@
         let labels = [],
           data = [],
           colors = [];
-        for (const [key, materia] of Object.entries(window.editalState)) {
-          if (errorCount[key] > 0) {
+        ORDEM_MATERIAS.forEach((key) => {
+          const materia = window.editalState[key];
+          if (materia && errorCount[key] > 0) {
             labels.push(materia.nome);
             data.push(errorCount[key]);
             colors.push(materia.cor);
           }
-        }
+        });
         if (data.length === 0)
           document.getElementById("empty-chart").classList.remove("hidden");
         else document.getElementById("empty-chart").classList.add("hidden");
