@@ -1,0 +1,1901 @@
+<!doctype html>
+<html lang="pt-BR" class="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BACEN Ultimate - Hub de Estudos</title>
+
+    <!-- Favicon e Apple Touch Icon -->
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%233b82f6'/><path d='M55 15 L30 55 H50 L45 85 L70 45 H50 Z' fill='%23ffffff'/></svg>"
+    />
+    <link
+      rel="apple-touch-icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%233b82f6'/><path d='M55 15 L30 55 H50 L45 85 L70 45 H50 Z' fill='%23ffffff'/></svg>"
+    />
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            fontFamily: { sans: ['"Plus Jakarta Sans"', "sans-serif"] },
+            colors: {
+              brand: {
+                50: "#eff6ff",
+                100: "#dbeafe",
+                500: "#3b82f6",
+                600: "#2563eb",
+                900: "#1e3a8a",
+                950: "#172554",
+              },
+              surface: "#f8fafc",
+              darkBg: "#0f172a",
+              darkCard: "#1e293b",
+            },
+            boxShadow: {
+              soft: "0 4px 20px -2px rgba(0, 0, 0, 0.05)",
+              glow: "0 0 15px rgba(59, 130, 246, 0.5)",
+              darkGlow: "0 0 15px rgba(59, 130, 246, 0.2)",
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      body {
+        transition:
+          background-color 0.3s,
+          color 0.3s;
+      }
+      .nav-item {
+        transition: all 0.2s ease;
+        border-left: 3px solid transparent;
+      }
+      .nav-item.active {
+        background-color: rgba(59, 130, 246, 0.1);
+        border-left-color: #3b82f6;
+        color: #3b82f6;
+        font-weight: 700;
+      }
+      .dark .nav-item.active {
+        background-color: rgba(255, 255, 255, 0.05);
+        color: #fff;
+        border-left-color: #60a5fa;
+      }
+
+      .view-section {
+        display: none;
+        animation: fadeIn 0.4s ease-out forwards;
+      }
+      .view-section.active {
+        display: block;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Custom Scrollbar */
+      ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 10px;
+      }
+      .dark ::-webkit-scrollbar-thumb {
+        background: #475569;
+      }
+
+      /* Toast Animation */
+      .toast-enter {
+        animation: slideInRight 0.3s ease-out forwards;
+      }
+      .toast-leave {
+        animation: slideOutRight 0.3s ease-in forwards;
+      }
+      @keyframes slideInRight {
+        from {
+          transform: translateX(100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+      @keyframes slideOutRight {
+        from {
+          transform: translateX(0);
+          opacity: 1;
+        }
+        to {
+          transform: translateX(100%);
+          opacity: 0;
+        }
+      }
+
+      /* Flashcards */
+      .perspective {
+        perspective: 1000px;
+      }
+      .transform-style-3d {
+        transform-style: preserve-3d;
+        transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+      }
+      .backface-hidden {
+        backface-visibility: hidden;
+      }
+      .rotate-y-180 {
+        transform: rotateY(180deg);
+      }
+      .flip-card.flipped .transform-style-3d {
+        transform: rotateY(180deg);
+      }
+
+      /* Checkbox Edital */
+      .custom-check {
+        appearance: none;
+        background-color: transparent;
+        margin: 0;
+        font: inherit;
+        color: currentColor;
+        width: 1.15em;
+        height: 1.15em;
+        border: 2px solid currentColor;
+        border-radius: 0.15em;
+        transform: translateY(-0.075em);
+        display: grid;
+        place-content: center;
+      }
+      .custom-check::before {
+        content: "";
+        width: 0.65em;
+        height: 0.65em;
+        transform: scale(0);
+        transition: 120ms transform ease-in-out;
+        box-shadow: inset 1em 1em white;
+        transform-origin: center;
+        clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+      }
+      .custom-check:checked::before {
+        transform: scale(1);
+      }
+      .custom-check:checked {
+        background-color: #3b82f6;
+        border-color: #3b82f6;
+      }
+    </style>
+  </head>
+  <body
+    class="flex h-screen overflow-hidden antialiased bg-slate-50 text-slate-800 dark:bg-darkBg dark:text-slate-200"
+  >
+    <!-- Loading Overlay -->
+    <div
+      id="loading-overlay"
+      class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[100] flex flex-col items-center justify-center text-white"
+    >
+      <i
+        class="fa-solid fa-circle-notch fa-spin text-4xl mb-4 text-brand-400"
+      ></i>
+      <p class="font-semibold tracking-wider">Conectando ao Firebase...</p>
+    </div>
+
+    <!-- Toast Container -->
+    <div
+      id="toast-container"
+      class="fixed top-5 right-5 z-50 flex flex-col gap-3"
+    ></div>
+
+    <!-- Pomodoro Widget -->
+    <div class="fixed bottom-6 right-6 z-40">
+      <div
+        id="pomodoro-panel"
+        class="bg-white dark:bg-darkCard rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 p-4 w-64 mb-4 hidden transform transition-all origin-bottom-right"
+      >
+        <div class="flex justify-between items-center mb-4">
+          <h4
+            class="font-bold text-slate-700 dark:text-slate-200 flex items-center gap-2"
+          >
+            <i class="fa-solid fa-stopwatch text-brand-500"></i> Pomodoro
+          </h4>
+          <button
+            onclick="togglePomodoro()"
+            class="text-slate-400 hover:text-slate-600 dark:hover:text-white"
+          >
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+        <div class="text-center mb-4">
+          <div
+            id="pomo-time"
+            class="text-5xl font-extrabold text-slate-800 dark:text-white tracking-tighter"
+          >
+            30:00
+          </div>
+          <div
+            id="pomo-status"
+            class="text-xs font-bold uppercase text-brand-500 mt-1 tracking-widest"
+          >
+            Foco Total
+          </div>
+        </div>
+        <div class="flex justify-center gap-2">
+          <button
+            onclick="startPomodoro()"
+            id="pomo-start"
+            class="bg-brand-500 hover:bg-brand-600 text-white w-10 h-10 rounded-full flex items-center justify-center shadow-md transition-transform hover:scale-105"
+          >
+            <i class="fa-solid fa-play"></i>
+          </button>
+          <button
+            onclick="pausePomodoro()"
+            id="pomo-pause"
+            class="bg-amber-500 hover:bg-amber-600 text-white w-10 h-10 rounded-full flex items-center justify-center shadow-md transition-transform hover:scale-105 hidden"
+          >
+            <i class="fa-solid fa-pause"></i>
+          </button>
+          <button
+            onclick="resetPomodoro()"
+            class="bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 w-10 h-10 rounded-full flex items-center justify-center shadow-sm transition-transform hover:scale-105"
+          >
+            <i class="fa-solid fa-rotate-right"></i>
+          </button>
+        </div>
+      </div>
+      <button
+        onclick="togglePomodoro()"
+        class="w-14 h-14 bg-brand-600 hover:bg-brand-700 text-white rounded-full shadow-lg shadow-brand-500/40 flex items-center justify-center text-xl transition-transform hover:scale-110 ml-auto float-right relative"
+      >
+        <i class="fa-solid fa-clock"></i>
+        <span
+          class="absolute top-0 right-0 w-3 h-3 bg-red-500 border-2 border-white rounded-full hidden"
+          id="pomo-indicator"
+        ></span>
+      </button>
+    </div>
+
+    <!-- Sidebar -->
+    <aside
+      class="w-64 bg-white dark:bg-darkCard border-r border-slate-200 dark:border-slate-800 flex flex-col hidden md:flex z-20 transition-colors"
+    >
+      <div class="p-6 border-b border-slate-200 dark:border-slate-800">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div
+              class="w-10 h-10 rounded-lg bg-gradient-to-br from-brand-500 to-indigo-600 flex items-center justify-center text-white font-bold text-xl shadow-glow dark:shadow-darkGlow"
+            >
+              <i class="fa-solid fa-bolt"></i>
+            </div>
+            <div>
+              <h1
+                class="text-xl font-bold text-slate-800 dark:text-white tracking-tight"
+              >
+                BACEN
+              </h1>
+              <p
+                class="text-[10px] text-emerald-500 font-bold uppercase tracking-wider"
+                id="status-conexao"
+              >
+                <i class="fa-solid fa-wifi"></i> Online
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <nav class="flex-1 py-6 flex flex-col gap-1 px-3 overflow-y-auto">
+        <p
+          class="text-xs font-bold text-slate-400 dark:text-slate-500 px-4 mb-2 uppercase tracking-wider"
+        >
+          Menu Principal
+        </p>
+        <button
+          onclick="navigate('dashboard')"
+          id="nav-dashboard"
+          class="nav-item active rounded-lg px-4 py-3 flex items-center gap-3 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800"
+        >
+          <i class="fa-solid fa-chart-pie w-5"></i>
+          <span class="font-medium">Dashboard</span>
+        </button>
+        <button
+          onclick="navigate('edital')"
+          id="nav-edital"
+          class="nav-item rounded-lg px-4 py-3 flex items-center gap-3 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800"
+        >
+          <i class="fa-solid fa-list-check w-5"></i>
+          <span class="font-medium">Edital Verticalizado</span>
+        </button>
+        <button
+          onclick="navigate('caderno')"
+          id="nav-caderno"
+          class="nav-item rounded-lg px-4 py-3 flex items-center gap-3 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800"
+        >
+          <i class="fa-solid fa-book-skull w-5"></i>
+          <span class="font-medium">Caderno de Erros</span>
+        </button>
+        <button
+          onclick="navigate('flashcards')"
+          id="nav-flashcards"
+          class="nav-item rounded-lg px-4 py-3 flex items-center gap-3 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800"
+        >
+          <i class="fa-solid fa-layer-group w-5"></i>
+          <span class="font-medium">Flashcards</span>
+        </button>
+        <button
+          onclick="navigate('simulados')"
+          id="nav-simulados"
+          class="nav-item rounded-lg px-4 py-3 flex items-center gap-3 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800"
+        >
+          <i class="fa-solid fa-crosshairs w-5"></i>
+          <span class="font-medium">Simulados Cebraspe</span>
+        </button>
+      </nav>
+
+      <div
+        class="p-4 mt-auto border-t border-slate-200 dark:border-slate-800 flex justify-between items-center"
+      >
+        <div
+          class="flex items-center gap-2 bg-orange-50 dark:bg-orange-900/20 px-3 py-2 rounded-lg border border-orange-100 dark:border-orange-800/30"
+          title="Dias seguidos de estudo"
+        >
+          <i class="fa-solid fa-fire text-orange-500"></i>
+          <span
+            class="font-extrabold text-orange-600 dark:text-orange-400"
+            id="streak-counter"
+            >0</span
+          >
+        </div>
+        <button
+          onclick="toggleTheme()"
+          class="w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 flex items-center justify-center hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+        >
+          <i class="fa-solid fa-moon dark:hidden"></i>
+          <i class="fa-solid fa-sun hidden dark:block text-yellow-400"></i>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Mobile Header -->
+    <div
+      class="md:hidden fixed top-0 w-full bg-white dark:bg-darkCard border-b border-slate-200 dark:border-slate-800 text-slate-800 dark:text-white p-4 flex justify-between items-center z-50"
+    >
+      <div class="flex items-center gap-2">
+        <i class="fa-solid fa-fire text-orange-500"></i
+        ><span id="mobile-streak" class="font-bold text-orange-500">0</span>
+      </div>
+      <select
+        id="mobile-nav"
+        onchange="navigate(this.value)"
+        class="bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-white border-none p-2 rounded-lg text-sm focus:ring-2 outline-none font-bold"
+      >
+        <option value="dashboard">Dashboard</option>
+        <option value="edital">Edital Verticalizado</option>
+        <option value="caderno">Caderno de Erros</option>
+        <option value="flashcards">Flashcards</option>
+        <option value="simulados">Simulados</option>
+      </select>
+      <button
+        onclick="toggleTheme()"
+        class="text-slate-500 dark:text-yellow-400"
+      >
+        <i class="fa-solid fa-moon dark:hidden"></i
+        ><i class="fa-solid fa-sun hidden dark:block"></i>
+      </button>
+    </div>
+
+    <!-- Main Content -->
+    <main
+      class="flex-1 p-4 md:p-8 overflow-y-auto mt-16 md:mt-0 relative w-full h-full scroll-smooth"
+    >
+      <!-- ================= DASHBOARD ================= -->
+      <section
+        id="view-dashboard"
+        class="view-section active w-full max-w-7xl mx-auto"
+      >
+        <div
+          class="flex flex-col md:flex-row md:justify-between md:items-end mb-8 gap-4"
+        >
+          <div>
+            <h2 class="text-2xl md:text-3xl font-extrabold tracking-tight">
+              Olá, Jefferson!
+            </h2>
+            <p class="text-slate-500 dark:text-slate-400 mt-1">
+              Aqui está o resumo da sua operação BACEN hoje.
+            </p>
+          </div>
+          <!-- Revisões Inteligentes Alert -->
+          <div
+            id="revisao-alert"
+            class="hidden bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-200 dark:border-indigo-800 rounded-xl p-4 flex items-center gap-4 animate-pulse"
+          >
+            <div
+              class="w-10 h-10 bg-indigo-100 dark:bg-indigo-800 text-indigo-600 dark:text-indigo-300 rounded-full flex items-center justify-center text-xl shrink-0"
+            >
+              <i class="fa-solid fa-brain"></i>
+            </div>
+            <div>
+              <p class="text-sm font-bold text-indigo-900 dark:text-indigo-200">
+                Revisão Espaçada Pendente!
+              </p>
+              <p class="text-xs text-indigo-700 dark:text-indigo-400">
+                Você tem tópicos precisando de revisão hoje.
+              </p>
+            </div>
+            <button
+              onclick="navigate('edital')"
+              class="ml-auto bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition-colors"
+            >
+              Ver Agora
+            </button>
+          </div>
+        </div>
+
+        <!-- Top Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div
+            class="bg-white dark:bg-darkCard p-6 rounded-2xl shadow-soft border border-slate-100 dark:border-slate-800 flex items-center justify-between"
+          >
+            <div>
+              <p
+                class="text-sm font-medium text-slate-400 dark:text-slate-500 mb-1"
+              >
+                Tópicos do Edital
+              </p>
+              <p
+                class="text-3xl font-extrabold text-slate-800 dark:text-white"
+                id="stat-aulas"
+              >
+                0 / 0
+              </p>
+            </div>
+            <div
+              class="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex items-center justify-center text-xl"
+            >
+              <i class="fa-solid fa-list-check"></i>
+            </div>
+          </div>
+          <div
+            class="bg-white dark:bg-darkCard p-6 rounded-2xl shadow-soft border border-slate-100 dark:border-slate-800 flex items-center justify-between"
+          >
+            <div>
+              <p
+                class="text-sm font-medium text-slate-400 dark:text-slate-500 mb-1"
+              >
+                Erros Mapeados
+              </p>
+              <p
+                class="text-3xl font-extrabold text-slate-800 dark:text-white"
+                id="stat-erros"
+              >
+                0
+              </p>
+            </div>
+            <div
+              class="w-12 h-12 rounded-xl bg-red-50 dark:bg-red-900/30 text-red-500 dark:text-red-400 flex items-center justify-center text-xl"
+            >
+              <i class="fa-solid fa-bug"></i>
+            </div>
+          </div>
+          <div
+            class="bg-white dark:bg-darkCard p-6 rounded-2xl shadow-soft border border-slate-100 dark:border-slate-800 flex items-center justify-between"
+          >
+            <div>
+              <p
+                class="text-sm font-medium text-slate-400 dark:text-slate-500 mb-1"
+              >
+                Taxa de Conclusão
+              </p>
+              <p
+                class="text-3xl font-extrabold text-brand-600 dark:text-brand-400"
+                id="stat-taxa"
+              >
+                0%
+              </p>
+            </div>
+            <div
+              class="w-12 h-12 rounded-xl bg-emerald-50 dark:bg-emerald-900/30 text-emerald-500 flex items-center justify-center text-xl"
+            >
+              <i class="fa-solid fa-trophy"></i>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <!-- Progresso Macro -->
+          <div
+            class="bg-white dark:bg-darkCard p-6 rounded-2xl shadow-soft border border-slate-100 dark:border-slate-800 lg:col-span-2"
+          >
+            <h3 class="text-lg font-bold mb-6 flex items-center gap-2">
+              <i class="fa-solid fa-bars-progress text-brand-500"></i> Progresso
+              das Disciplinas
+            </h3>
+            <div class="space-y-6" id="progress-container"></div>
+          </div>
+
+          <!-- Gráfico de Erros -->
+          <div
+            class="bg-white dark:bg-darkCard p-6 rounded-2xl shadow-soft border border-slate-100 dark:border-slate-800 flex flex-col"
+          >
+            <h3 class="text-lg font-bold mb-2 flex items-center gap-2">
+              <i class="fa-solid fa-chart-pie text-brand-500"></i> Seus Pontos
+              Fracos
+            </h3>
+            <div
+              class="flex-1 flex items-center justify-center relative min-h-[250px]"
+            >
+              <canvas id="errosChart"></canvas>
+              <div
+                id="empty-chart"
+                class="absolute inset-0 flex flex-col items-center justify-center bg-white dark:bg-darkCard hidden"
+              >
+                <i
+                  class="fa-solid fa-ghost text-4xl text-slate-300 dark:text-slate-600 mb-2"
+                ></i>
+                <p class="text-sm text-slate-400 font-medium">Caderno Vazio</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= EDITAL VERTICALIZADO ================= -->
+      <section id="view-edital" class="view-section w-full max-w-7xl mx-auto">
+        <header
+          class="mb-8 flex flex-col md:flex-row justify-between md:items-end gap-4"
+        >
+          <div>
+            <h2 class="text-2xl md:text-3xl font-extrabold tracking-tight">
+              Edital Verticalizado
+            </h2>
+            <p class="text-slate-500 dark:text-slate-400 mt-1">
+              Marque o que estudou. O sistema cuida das revisões.
+            </p>
+          </div>
+          <div class="flex gap-2">
+            <span
+              class="px-3 py-1 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 text-xs font-bold rounded border border-indigo-200 dark:border-indigo-800"
+              ><i class="fa-solid fa-clock-rotate-left mr-1"></i> Rev 7
+              Dias</span
+            >
+            <span
+              class="px-3 py-1 bg-purple-50 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 text-xs font-bold rounded border border-purple-200 dark:border-purple-800"
+              ><i class="fa-solid fa-calendar-check mr-1"></i> Rev 30 Dias</span
+            >
+          </div>
+        </header>
+
+        <div
+          class="grid grid-cols-1 lg:grid-cols-2 gap-6"
+          id="edital-container"
+        >
+          <!-- Inserido via JS -->
+        </div>
+      </section>
+
+      <!-- ================= CADERNO DE ERROS ================= -->
+      <section id="view-caderno" class="view-section w-full max-w-7xl mx-auto">
+        <header class="mb-6 flex justify-between items-end">
+          <div>
+            <h2 class="text-2xl md:text-3xl font-extrabold">
+              Caderno de Erros
+            </h2>
+          </div>
+          <button
+            onclick="toggleFormErro()"
+            class="bg-brand-600 hover:bg-brand-700 text-white px-5 py-2.5 rounded-xl shadow-md text-sm font-semibold transition-colors"
+          >
+            <i class="fa-solid fa-plus mr-2"></i> Novo Registro
+          </button>
+        </header>
+
+        <div
+          id="form-erro-container"
+          class="bg-white dark:bg-darkCard p-6 rounded-2xl shadow-soft border border-slate-100 dark:border-slate-800 mb-8 hidden"
+        >
+          <form id="erro-form" onsubmit="salvarErro(event)">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
+              <select
+                id="input-disciplina"
+                required
+                class="border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-brand-500"
+              >
+                <option value="" disabled selected>Disciplina...</option>
+                <option value="engsoft">Engenharia de Software</option>
+                <option value="bd">Bancos de Dados</option>
+                <option value="portugues">Língua Portuguesa</option>
+                <option value="admin">Direito Administrativo</option>
+                <option value="gestao">Gestão em TI</option>
+              </select>
+              <input
+                type="text"
+                id="input-topico"
+                placeholder="Tópico Específico (ex: Scrum)"
+                required
+                class="border border-slate-200 dark:border-slate-700 bg-transparent rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-brand-500"
+              />
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-5">
+              <textarea
+                id="input-pegadinha"
+                rows="3"
+                required
+                placeholder="A Pegadinha (Como a banca te enganou)..."
+                class="border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-900/10 rounded-xl p-3 text-sm outline-none text-red-900 dark:text-red-300 focus:ring-2 focus:ring-red-500"
+              ></textarea>
+              <textarea
+                id="input-regra"
+                rows="3"
+                required
+                placeholder="A Regra (A verdade absoluta)... Use **negrito**"
+                class="border border-emerald-200 dark:border-emerald-900/50 bg-emerald-50 dark:bg-emerald-900/10 rounded-xl p-3 text-sm outline-none text-emerald-900 dark:text-emerald-300 focus:ring-2 focus:ring-emerald-500"
+              ></textarea>
+            </div>
+            <div
+              class="flex justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-800"
+            >
+              <button
+                type="button"
+                onclick="toggleFormErro()"
+                class="px-5 py-2.5 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl text-sm font-semibold transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                class="px-6 py-2.5 bg-brand-600 text-white rounded-xl hover:bg-brand-700 text-sm font-bold shadow-md transition-colors"
+              >
+                Salvar no Banco
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <div
+          class="bg-white dark:bg-darkCard rounded-2xl shadow-soft border border-slate-100 dark:border-slate-800 overflow-hidden"
+        >
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm">
+              <thead
+                class="bg-slate-50 dark:bg-slate-800 border-b border-slate-100 dark:border-slate-700"
+              >
+                <tr>
+                  <th
+                    class="px-5 py-4 font-bold text-xs text-slate-400 uppercase"
+                  >
+                    Disciplina/Tópico
+                  </th>
+                  <th
+                    class="px-5 py-4 font-bold text-xs text-slate-400 uppercase w-1/3"
+                  >
+                    Pegadinha
+                  </th>
+                  <th
+                    class="px-5 py-4 font-bold text-xs text-slate-400 uppercase w-1/3"
+                  >
+                    Regra Ouro
+                  </th>
+                  <th
+                    class="px-5 py-4 font-bold text-xs text-slate-400 uppercase text-center"
+                  >
+                    Ações
+                  </th>
+                </tr>
+              </thead>
+              <tbody
+                id="tabela-body"
+                class="divide-y divide-slate-100 dark:divide-slate-800"
+              ></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= FLASHCARDS ================= -->
+      <section
+        id="view-flashcards"
+        class="view-section w-full max-w-4xl mx-auto"
+      >
+        <header class="mb-8 text-center">
+          <h2 class="text-3xl font-extrabold tracking-tight">Revisão Ativa</h2>
+          <p class="text-slate-500 mt-1">
+            Vire o cartão mentalmente antes de clicar para revelar a resposta.
+          </p>
+        </header>
+
+        <div id="flashcard-empty" class="text-center py-20 hidden">
+          <i
+            class="fa-solid fa-layer-group text-6xl text-slate-200 dark:text-slate-700 mb-4"
+          ></i>
+          <p class="text-slate-500 font-medium">
+            Caderno vazio. Adicione erros primeiro!
+          </p>
+        </div>
+
+        <div
+          id="flashcard-container"
+          class="relative w-full h-[400px] perspective mx-auto cursor-pointer"
+          onclick="flipCard()"
+        >
+          <div
+            id="flashcard-inner"
+            class="w-full h-full transform-style-3d relative rounded-2xl shadow-xl transition-all duration-500"
+          >
+            <!-- Frente -->
+            <div
+              class="absolute inset-0 backface-hidden bg-white dark:bg-darkCard border-2 border-slate-100 dark:border-slate-700 rounded-2xl p-8 flex flex-col items-center justify-center text-center"
+            >
+              <span
+                class="absolute top-4 right-4 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider"
+                >A Pegadinha</span
+              >
+              <div
+                id="fc-disciplina"
+                class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4"
+              ></div>
+              <p
+                id="fc-pegadinha"
+                class="text-xl md:text-2xl font-semibold leading-relaxed text-slate-800 dark:text-slate-200"
+              ></p>
+              <p
+                class="absolute bottom-6 text-sm text-slate-400 flex items-center gap-2"
+              >
+                <i class="fa-solid fa-hand-pointer"></i> Clique para revelar
+              </p>
+            </div>
+            <!-- Verso -->
+            <div
+              class="absolute inset-0 backface-hidden rotate-y-180 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl p-8 flex flex-col items-center justify-center text-center text-white shadow-inner"
+            >
+              <span
+                class="absolute top-4 left-4 bg-white/20 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider"
+                >A Regra de Ouro</span
+              >
+              <p
+                id="fc-regra"
+                class="text-xl md:text-2xl font-bold leading-relaxed"
+              ></p>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex justify-center gap-4 mt-8" id="flashcard-controls">
+          <button
+            onclick="prevCard()"
+            class="w-12 h-12 rounded-full bg-white dark:bg-darkCard shadow border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition flex items-center justify-center"
+          >
+            <i class="fa-solid fa-chevron-left"></i>
+          </button>
+          <div class="flex items-center px-4 font-bold text-slate-400">
+            <span id="fc-current">1</span> &nbsp;/&nbsp;
+            <span id="fc-total">1</span>
+          </div>
+          <button
+            onclick="nextCard()"
+            class="w-12 h-12 rounded-full bg-white dark:bg-darkCard shadow border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition flex items-center justify-center"
+          >
+            <i class="fa-solid fa-chevron-right"></i>
+          </button>
+        </div>
+      </section>
+
+      <!-- ================= SIMULADOS ================= -->
+      <section
+        id="view-simulados"
+        class="view-section w-full max-w-7xl mx-auto"
+      >
+        <header
+          class="mb-8 flex flex-col md:flex-row justify-between items-end gap-4"
+        >
+          <div>
+            <h2 class="text-2xl md:text-3xl font-extrabold tracking-tight">
+              Desempenho em Provas
+            </h2>
+          </div>
+          <button
+            onclick="toggleFormSimulado()"
+            class="bg-brand-600 hover:bg-brand-700 text-white px-5 py-2.5 rounded-xl shadow-md text-sm font-semibold transition-colors"
+          >
+            <i class="fa-solid fa-plus mr-2"></i> Nova Nota
+          </button>
+        </header>
+
+        <div
+          id="form-simulado-container"
+          class="bg-white dark:bg-darkCard p-6 rounded-2xl shadow-soft border border-slate-100 dark:border-slate-800 mb-8 hidden"
+        >
+          <form id="simulado-form" onsubmit="salvarSimulado(event)">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+              <div>
+                <label class="block text-xs font-bold text-slate-500 mb-1"
+                  >Data</label
+                ><input
+                  type="date"
+                  id="sim-data"
+                  required
+                  class="w-full border border-slate-200 dark:border-slate-700 bg-transparent rounded-xl p-3 outline-none text-sm focus:ring-2 focus:ring-brand-500"
+                  style="color-scheme: dark"
+                />
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-emerald-600 mb-1"
+                  >Certas</label
+                ><input
+                  type="number"
+                  min="0"
+                  id="sim-certas"
+                  required
+                  class="w-full border border-emerald-200 dark:border-emerald-900/50 bg-emerald-50 dark:bg-emerald-900/10 rounded-xl p-3 outline-none text-sm font-bold text-emerald-700 dark:text-emerald-400 focus:ring-2 focus:ring-emerald-500"
+                />
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-red-500 mb-1"
+                  >Erradas</label
+                ><input
+                  type="number"
+                  min="0"
+                  id="sim-erradas"
+                  required
+                  class="w-full border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-900/10 rounded-xl p-3 outline-none text-sm font-bold text-red-700 dark:text-red-400 focus:ring-2 focus:ring-red-500"
+                />
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-400 mb-1"
+                  >Em Branco</label
+                ><input
+                  type="number"
+                  min="0"
+                  id="sim-brancos"
+                  required
+                  class="w-full border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 rounded-xl p-3 outline-none text-sm font-bold focus:ring-2 focus:ring-slate-400"
+                />
+              </div>
+            </div>
+            <div class="flex justify-end gap-3">
+              <button
+                type="submit"
+                class="px-6 py-2.5 bg-brand-600 text-white rounded-xl font-bold shadow-md hover:bg-brand-700 transition-colors"
+              >
+                Registrar Nota Líquida
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div
+            class="lg:col-span-2 bg-white dark:bg-darkCard p-6 rounded-2xl shadow-soft border border-slate-100 dark:border-slate-800 min-h-[300px] flex flex-col"
+          >
+            <h3 class="font-bold mb-4">Curva de Evolução Cebraspe</h3>
+            <div class="flex-1 relative w-full">
+              <canvas id="simuladosChart"></canvas>
+            </div>
+          </div>
+          <div
+            class="bg-white dark:bg-darkCard rounded-2xl shadow-soft border border-slate-100 dark:border-slate-800 overflow-hidden flex flex-col"
+          >
+            <div
+              class="p-4 border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800"
+            >
+              <h3 class="font-bold">Histórico de Baterias</h3>
+            </div>
+            <div
+              class="flex-1 overflow-y-auto p-4 space-y-3"
+              id="simulados-lista"
+            ></div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- ================= JAVASCRIPT & LOGIC ================= -->
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+      import {
+        getAuth,
+        signInWithCustomToken,
+        signInAnonymously,
+        onAuthStateChanged,
+      } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+      import {
+        getFirestore,
+        collection,
+        doc,
+        setDoc,
+        getDoc,
+        onSnapshot,
+        addDoc,
+        updateDoc,
+        deleteDoc,
+      } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+      // FIREBASE CONFIGURATION COMPLETA
+      const firebaseConfig = {
+        apiKey: "AIzaSyAkH1pYuONCj2YfXetQ5px2bM_3W78ssug",
+        authDomain: "bacen-f0a22.firebaseapp.com",
+        databaseURL: "https://bacen-f0a22-default-rtdb.firebaseio.com",
+        projectId: "bacen-f0a22",
+        storageBucket: "bacen-f0a22.firebasestorage.app",
+        messagingSenderId: "855948660734",
+        appId: "1:855948660734:web:f7f3530478805b20c7baaf",
+      };
+
+      const appId = "bacen-hub-local";
+      const useLocal = false; // Mantemos 'false' para garantir conexão ao Firebase
+
+      let app,
+        auth,
+        db,
+        currentUser = null;
+      let unsubscribeErros,
+        unsubscribeSimulados,
+        unsubscribeEdital,
+        unsubscribeStreak;
+
+      // EDITAL COMPLETO
+      const EDITAL_TEMPLATE = {
+        engsoft: {
+          nome: "Engenharia de Software",
+          cor: "#3b82f6",
+          topicos: [
+            {
+              id: "es1",
+              nome: "Metodologias Ágeis (Scrum, Kanban)",
+              concluido: false,
+              dataConc: null,
+              rev7: false,
+              rev30: false,
+            },
+            {
+              id: "es2",
+              nome: "Arquitetura (Microsserviços, API REST)",
+              concluido: false,
+              dataConc: null,
+              rev7: false,
+              rev30: false,
+            },
+            {
+              id: "es3",
+              nome: "Engenharia de Requisitos",
+              concluido: false,
+              dataConc: null,
+              rev7: false,
+              rev30: false,
+            },
+            {
+              id: "es4",
+              nome: "Testes (TDD, BDD, Unitários)",
+              concluido: false,
+              dataConc: null,
+              rev7: false,
+              rev30: false,
+            },
+            {
+              id: "es5",
+              nome: "Padrões de Projeto (GoF)",
+              concluido: false,
+              dataConc: null,
+              rev7: false,
+              rev30: false,
+            },
+          ],
+        },
+        bd: {
+          nome: "Bancos de Dados",
+          cor: "#f59e0b",
+          topicos: [
+            {
+              id: "bd1",
+              nome: "Aula 1 - Conceitos Iniciais",
+              concluido: false,
+              dataConc: null,
+              rev7: false,
+              rev30: false,
+            },
+            {
+              id: "bd2",
+              nome: "Aula 2 - Tipos de Usuários, Linguagem e Arquitetura SGBDs",
+              concluido: false,
+              dataConc: null,
+              rev7: false,
+              rev30: false,
+            },
+            {
+              id: "bd3",
+              nome: "Aula 3 - Projeto de BD",
+              concluido: false,
+              dataConc: null,
+              rev7: false,
+              rev30: false,
+            },
+            {
+              id: "bd4",
+              nome: "Aula 4 - Evolução dos BDs",
+              concluido: false,
+              dataConc: null,
+              rev7: false,
+              rev30: false,
+            },
+            {
+              id: "bd5",
+              nome: "Aula 5 - MER (Modelo Entidade Relacionamento)",
+              concluido: false,
+              dataConc: null,
+              rev7: false,
+              rev30: false,
+            },
+          ],
+        },
+        portugues: {
+          nome: "Língua Portuguesa",
+          cor: "#10b981",
+          topicos: [
+            {
+              id: "pt1",
+              nome: "Aula 1 - Compreensão e Interpretação de Textos",
+              concluido: false,
+              dataConc: null,
+              rev7: false,
+              rev30: false,
+            },
+            {
+              id: "pt2",
+              nome: "Aula 2 - Significação Literal e Contextual",
+              concluido: false,
+              dataConc: null,
+              rev7: false,
+              rev30: false,
+            },
+            {
+              id: "pt3",
+              nome: "Aula 3 - Campos Semânticos e Lexicais",
+              concluido: false,
+              dataConc: null,
+              rev7: false,
+              rev30: false,
+            },
+            {
+              id: "pt4",
+              nome: "Aula 4 - Tipologia e Gêneros Textuais I",
+              concluido: false,
+              dataConc: null,
+              rev7: false,
+              rev30: false,
+            },
+            {
+              id: "pt5",
+              nome: "Aula 5 - Tipologia e Gêneros Textuais II",
+              concluido: false,
+              dataConc: null,
+              rev7: false,
+              rev30: false,
+            },
+            {
+              id: "pt6",
+              nome: "Aula 6 - Tipos de Discurso (Direto, Indireto)",
+              concluido: false,
+              dataConc: null,
+              rev7: false,
+              rev30: false,
+            },
+            {
+              id: "pt7",
+              nome: "Aula 7 - A Coerência Textual",
+              concluido: false,
+              dataConc: null,
+              rev7: false,
+              rev30: false,
+            },
+            {
+              id: "pt8",
+              nome: "Aula 8 - Mecanismos de Coesão Textual",
+              concluido: false,
+              dataConc: null,
+              rev7: false,
+              rev30: false,
+            },
+            {
+              id: "pt9",
+              nome: "Aula 9 - Mecanismos de Coesão Textual II",
+              concluido: false,
+              dataConc: null,
+              rev7: false,
+              rev30: false,
+            },
+            {
+              id: "pt10",
+              nome: "Aula 10 - Coesão Sequencial e Conectivos",
+              concluido: false,
+              dataConc: null,
+              rev7: false,
+              rev30: false,
+            },
+            {
+              id: "pt11",
+              nome: "Aula 11 - Coesão Sequencial e Emprego de Conectivos II",
+              concluido: false,
+              dataConc: null,
+              rev7: false,
+              rev30: false,
+            },
+            {
+              id: "pt12",
+              nome: "Aula 12 - Reescrita de Frases e Clareza",
+              concluido: false,
+              dataConc: null,
+              rev7: false,
+              rev30: false,
+            },
+            {
+              id: "pt13",
+              nome: "Aula 13 - Reescrita e Reorganização de Frases - O Paralelismo",
+              concluido: false,
+              dataConc: null,
+              rev7: false,
+              rev30: false,
+            },
+            {
+              id: "pt14",
+              nome: "Aula 14 - Registros de Linguagem - Variações Linguísticas",
+              concluido: false,
+              dataConc: null,
+              rev7: false,
+              rev30: false,
+            },
+            {
+              id: "pt15",
+              nome: "Aula 15 - Elementos dos Atos de Comunicação",
+              concluido: false,
+              dataConc: null,
+              rev7: false,
+              rev30: false,
+            },
+          ],
+        },
+        admin: {
+          nome: "Direito Administrativo",
+          cor: "#a855f7",
+          topicos: [
+            {
+              id: "da1",
+              nome: "Princípios da Administração",
+              concluido: false,
+              dataConc: null,
+              rev7: false,
+              rev30: false,
+            },
+            {
+              id: "da2",
+              nome: "Atos Administrativos",
+              concluido: false,
+              dataConc: null,
+              rev7: false,
+              rev30: false,
+            },
+            {
+              id: "da3",
+              nome: "Nova Lei de Licitações",
+              concluido: false,
+              dataConc: null,
+              rev7: false,
+              rev30: false,
+            },
+          ],
+        },
+        gestao: {
+          nome: "Gestão em TI",
+          cor: "#14b8a6",
+          topicos: [
+            {
+              id: "gt1",
+              nome: "ITIL 4",
+              concluido: false,
+              dataConc: null,
+              rev7: false,
+              rev30: false,
+            },
+            {
+              id: "gt2",
+              nome: "COBIT 2019",
+              concluido: false,
+              dataConc: null,
+              rev7: false,
+              rev30: false,
+            },
+          ],
+        },
+      };
+
+      function syncEdital(savedState) {
+        let state = JSON.parse(JSON.stringify(savedState));
+        for (const mat in EDITAL_TEMPLATE) {
+          if (!state[mat]) {
+            state[mat] = JSON.parse(JSON.stringify(EDITAL_TEMPLATE[mat]));
+          } else {
+            EDITAL_TEMPLATE[mat].topicos.forEach((tplTopic) => {
+              let existing = state[mat].topicos.find(
+                (t) => t.id === tplTopic.id,
+              );
+              if (existing) existing.nome = tplTopic.nome;
+              else
+                state[mat].topicos.push(JSON.parse(JSON.stringify(tplTopic)));
+            });
+            state[mat].topicos = state[mat].topicos.filter((t) =>
+              EDITAL_TEMPLATE[mat].topicos.some((tpl) => tpl.id === t.id),
+            );
+          }
+        }
+        return state;
+      }
+
+      window.editalState = {};
+      window.cadernoDeErros = [];
+      window.simulados = [];
+      window.streakState = { count: 0, lastDate: null };
+      let charts = { erros: null, simulados: null };
+      let fcIndex = 0;
+
+      window.toggleTheme = function () {
+        document.documentElement.classList.toggle("dark");
+        localStorage.setItem(
+          "bacen_theme",
+          document.documentElement.classList.contains("dark")
+            ? "dark"
+            : "light",
+        );
+        updateChartColors();
+      };
+
+      window.onload = async function () {
+        if (
+          localStorage.getItem("bacen_theme") === "dark" ||
+          (!("bacen_theme" in localStorage) &&
+            window.matchMedia("(prefers-color-scheme: dark)").matches)
+        )
+          document.documentElement.classList.add("dark");
+
+        app = initializeApp(firebaseConfig);
+        auth = getAuth(app);
+        db = getFirestore(app);
+
+        try {
+          await signInAnonymously(auth);
+        } catch (e) {
+          document.getElementById("loading-overlay").innerHTML =
+            `<p class="text-red-400 font-bold">Erro de Autenticação. Verifique o seu painel do Firebase.</p>`;
+          return;
+        }
+
+        onAuthStateChanged(auth, (user) => {
+          if (user) {
+            currentUser = user;
+            setupListeners();
+          }
+        });
+        navigate("dashboard");
+      };
+
+      function setupListeners() {
+        const uid = currentUser.uid;
+
+        unsubscribeEdital = onSnapshot(
+          doc(db, "artifacts", appId, "users", uid, "config", "edital"),
+          (docSnap) => {
+            if (docSnap.exists()) {
+              const dadosNuvem = docSnap.data();
+              window.editalState = syncEdital(dadosNuvem);
+
+              // AUTO-ATUALIZAÇÃO: Se o código (EDITAL_TEMPLATE) tiver aulas novas que não estão na nuvem, ele atualiza o Firebase automaticamente!
+              if (
+                JSON.stringify(dadosNuvem) !==
+                JSON.stringify(window.editalState)
+              ) {
+                setDoc(
+                  doc(db, "artifacts", appId, "users", uid, "config", "edital"),
+                  window.editalState,
+                );
+              }
+            } else {
+              window.editalState = JSON.parse(JSON.stringify(EDITAL_TEMPLATE));
+              setDoc(
+                doc(db, "artifacts", appId, "users", uid, "config", "edital"),
+                window.editalState,
+              );
+            }
+            renderEdital();
+            updateDashboard();
+            hideLoading();
+          },
+        );
+
+        unsubscribeStreak = onSnapshot(
+          doc(db, "artifacts", appId, "users", uid, "config", "streak"),
+          (docSnap) => {
+            if (docSnap.exists()) window.streakState = docSnap.data();
+            else {
+              window.streakState = { count: 0, lastDate: null };
+              setDoc(
+                doc(db, "artifacts", appId, "users", uid, "config", "streak"),
+                window.streakState,
+              );
+            }
+            checkAndUpdateStreakOnLoad();
+          },
+        );
+
+        unsubscribeErros = onSnapshot(
+          collection(db, "artifacts", appId, "users", uid, "erros"),
+          (snap) => {
+            window.cadernoDeErros = snap.docs
+              .map((d) => ({ firebaseId: d.id, ...d.data() }))
+              .sort((a, b) => b.createdAt - a.createdAt);
+            updateDashboard();
+            renderTabelaErros();
+            if (typeof window.initFlashcards === "function")
+              window.initFlashcards();
+          },
+        );
+
+        unsubscribeSimulados = onSnapshot(
+          collection(db, "artifacts", appId, "users", uid, "simulados"),
+          (snap) => {
+            window.simulados = snap.docs
+              .map((d) => ({ firebaseId: d.id, ...d.data() }))
+              .sort((a, b) => new Date(a.data) - new Date(b.data));
+            renderSimulados();
+          },
+        );
+      }
+
+      function hideLoading() {
+        const o = document.getElementById("loading-overlay");
+        if (o) o.style.display = "none";
+      }
+      function getTodayStr() {
+        const d = new Date();
+        d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+        return d.toISOString().split("T")[0];
+      }
+
+      function checkAndUpdateStreakOnLoad() {
+        const today = getTodayStr();
+        const lastDate = window.streakState.lastDate;
+        let currentCount = window.streakState.count || 0;
+        if (lastDate && lastDate !== today) {
+          let yesterday = new Date();
+          yesterday.setDate(yesterday.getDate() - 1);
+          yesterday.setMinutes(
+            yesterday.getMinutes() - yesterday.getTimezoneOffset(),
+          );
+          if (
+            lastDate !== yesterday.toISOString().split("T")[0] &&
+            currentCount > 0
+          ) {
+            window.streakState = { count: 0, lastDate: lastDate };
+            salvarEstadoNuvem("streak", window.streakState);
+          }
+        }
+        renderStreak();
+      }
+
+      window.triggerActivity = async function () {
+        const today = getTodayStr();
+        let lastDate = window.streakState.lastDate;
+        let currentCount = window.streakState.count || 0;
+        if (lastDate !== today) {
+          let yesterday = new Date();
+          yesterday.setDate(yesterday.getDate() - 1);
+          yesterday.setMinutes(
+            yesterday.getMinutes() - yesterday.getTimezoneOffset(),
+          );
+          if (lastDate === yesterday.toISOString().split("T")[0])
+            currentCount++;
+          else currentCount = 1;
+          window.streakState = { count: currentCount, lastDate: today };
+          salvarEstadoNuvem("streak", window.streakState);
+          showToast(`Ofensiva garantida! ${currentCount} dia(s) seguidos 🔥`);
+          renderStreak();
+        }
+      };
+
+      function renderStreak() {
+        document.getElementById("streak-counter").innerText =
+          window.streakState.count;
+        document.getElementById("mobile-streak").innerText =
+          window.streakState.count;
+      }
+      async function salvarEstadoNuvem(chave, estadoObjeto) {
+        if (currentUser)
+          await updateDoc(
+            doc(
+              db,
+              "artifacts",
+              appId,
+              "users",
+              currentUser.uid,
+              "config",
+              chave,
+            ),
+            estadoObjeto,
+          );
+      }
+
+      window.toggleTopico = async function (materiaId, topicoId, checkbox) {
+        let newState = JSON.parse(JSON.stringify(window.editalState));
+        const topico = newState[materiaId].topicos.find(
+          (t) => t.id === topicoId,
+        );
+        if (topico) {
+          topico.concluido = checkbox.checked;
+          topico.dataConc = checkbox.checked ? Date.now() : null;
+          topico.rev7 = false;
+          topico.rev30 = false;
+          window.editalState = newState;
+          await salvarEstadoNuvem("edital", window.editalState);
+          if (checkbox.checked) window.triggerActivity();
+        }
+      };
+
+      window.marcarRevisao = async function (materiaId, topicoId, tipo) {
+        let newState = JSON.parse(JSON.stringify(window.editalState));
+        const topico = newState[materiaId].topicos.find(
+          (t) => t.id === topicoId,
+        );
+        if (topico) {
+          if (tipo === 7) topico.rev7 = !topico.rev7;
+          if (tipo === 30) topico.rev30 = !topico.rev30;
+          window.editalState = newState;
+          await salvarEstadoNuvem("edital", window.editalState);
+          if (topico.rev7 || topico.rev30) {
+            showToast(`Revisão anotada! 🧠`);
+            window.triggerActivity();
+          }
+        }
+      };
+
+      function renderEdital() {
+        const container = document.getElementById("edital-container");
+        if (!container) return;
+        container.innerHTML = "";
+        for (const [mId, materia] of Object.entries(window.editalState)) {
+          let topicosHtml = "";
+          let concluidos = 0;
+          materia.topicos.forEach((t) => {
+            if (t.concluido) concluidos++;
+            topicosHtml += `
+                        <div class="flex flex-col p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/50 transition border border-transparent hover:border-slate-200 dark:hover:border-slate-700 group">
+                            <label class="flex items-start cursor-pointer"><input type="checkbox" onchange="toggleTopico('${mId}', '${t.id}', this)" class="custom-check mt-0.5 text-brand-500" ${t.concluido ? "checked" : ""}><div class="ml-3 flex-1"><span class="${t.concluido ? "line-through text-slate-400 dark:text-slate-500" : "text-slate-700 dark:text-slate-200"} font-medium text-sm transition-colors">${t.nome}</span></div></label>
+                            ${t.concluido ? `<div class="ml-8 mt-2 flex gap-3 opacity-90"><label class="text-xs font-bold ${t.rev7 ? "text-indigo-600 dark:text-indigo-400" : "text-slate-400"} flex items-center gap-1 cursor-pointer transition"><input type="checkbox" onchange="marcarRevisao('${mId}', '${t.id}', 7)" ${t.rev7 ? "checked" : ""} class="w-3 h-3 rounded accent-indigo-500"> Rev 7D</label><label class="text-xs font-bold ${t.rev30 ? "text-purple-600 dark:text-purple-400" : "text-slate-400"} flex items-center gap-1 cursor-pointer transition"><input type="checkbox" onchange="marcarRevisao('${mId}', '${t.id}', 30)" ${t.rev30 ? "checked" : ""} class="w-3 h-3 rounded accent-purple-500"> Rev 30D</label></div>` : ""}
+                        </div>`;
+          });
+          container.innerHTML += `<div class="bg-white dark:bg-darkCard rounded-2xl shadow-soft border border-slate-100 dark:border-slate-800 overflow-hidden"><div class="px-5 py-4 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 flex justify-between items-center"><h3 class="font-bold text-slate-800 dark:text-white flex items-center gap-2"><span class="w-3 h-3 rounded-full" style="background-color: ${materia.cor}"></span> ${materia.nome}</h3><span class="text-xs font-bold text-slate-500">${concluidos}/${materia.topicos.length}</span></div><div class="p-2">${topicosHtml}</div></div>`;
+        }
+      }
+
+      function updateDashboard() {
+        const container = document.getElementById("progress-container");
+        const alertBox = document.getElementById("revisao-alert");
+        if (!container) return;
+        container.innerHTML = "";
+        let tTotal = 0,
+          tConc = 0,
+          temRevisaoPendente = false;
+        for (const [mId, materia] of Object.entries(window.editalState)) {
+          let mTotal = materia.topicos.length;
+          let mConc = 0;
+          materia.topicos.forEach((t) => {
+            tTotal++;
+            if (t.concluido) {
+              mConc++;
+              tConc++;
+              const daysSince = Math.floor(
+                (Date.now() - t.dataConc) / (1000 * 60 * 60 * 24),
+              );
+              if (daysSince >= 7 && !t.rev7) temRevisaoPendente = true;
+              if (daysSince >= 30 && !t.rev30) temRevisaoPendente = true;
+            }
+          });
+          const perc = mTotal > 0 ? Math.round((mConc / mTotal) * 100) : 0;
+          container.innerHTML += `<div><div class="flex justify-between items-end mb-2"><div><span class="font-bold text-sm">${materia.nome}</span><span class="text-xs text-slate-400 ml-2">${mConc}/${mTotal} Tópicos</span></div><span class="text-xs font-bold">${perc}%</span></div><div class="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-2.5 overflow-hidden"><div class="h-2.5 rounded-full transition-all" style="width: ${perc}%; background-color: ${materia.cor};"></div></div></div>`;
+        }
+        document.getElementById("stat-aulas").innerText =
+          `${tConc} / ${tTotal}`;
+        document.getElementById("stat-erros").innerText =
+          window.cadernoDeErros.length;
+        document.getElementById("stat-taxa").innerText =
+          `${tTotal > 0 ? Math.round((tConc / tTotal) * 100) : 0}%`;
+        if (temRevisaoPendente) alertBox.classList.remove("hidden");
+        else alertBox.classList.add("hidden");
+
+        const ctx = document.getElementById("errosChart").getContext("2d");
+        let errorCount = {};
+        for (const key of Object.keys(window.editalState)) errorCount[key] = 0;
+        window.cadernoDeErros.forEach((e) => {
+          if (errorCount[e.disciplina] !== undefined)
+            errorCount[e.disciplina] += e.qtd;
+        });
+        let labels = [],
+          data = [],
+          colors = [];
+        for (const [key, materia] of Object.entries(window.editalState)) {
+          if (errorCount[key] > 0) {
+            labels.push(materia.nome);
+            data.push(errorCount[key]);
+            colors.push(materia.cor);
+          }
+        }
+        if (data.length === 0)
+          document.getElementById("empty-chart").classList.remove("hidden");
+        else document.getElementById("empty-chart").classList.add("hidden");
+
+        const isDark = document.documentElement.classList.contains("dark");
+        if (charts.erros) charts.erros.destroy();
+        charts.erros = new Chart(ctx, {
+          type: "doughnut",
+          data: {
+            labels,
+            datasets: [{ data, backgroundColor: colors, borderWidth: 0 }],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: "75%",
+            plugins: {
+              legend: {
+                position: "right",
+                labels: {
+                  color: isDark ? "#cbd5e1" : "#475569",
+                  boxWidth: 12,
+                  font: { family: "'Plus Jakarta Sans'" },
+                },
+              },
+            },
+          },
+        });
+      }
+
+      function updateChartColors() {
+        if (
+          document.getElementById("view-dashboard").classList.contains("active")
+        )
+          updateDashboard();
+        if (
+          document.getElementById("view-simulados").classList.contains("active")
+        )
+          renderSimulados();
+      }
+
+      window.salvarErro = async function (e) {
+        e.preventDefault();
+        if (!currentUser) return;
+        const materiaId = document.getElementById("input-disciplina").value;
+        await addDoc(
+          collection(db, "artifacts", appId, "users", currentUser.uid, "erros"),
+          {
+            disciplina: materiaId,
+            nomeDisciplina:
+              window.editalState[materiaId]?.nome || "Materia Desconhecida",
+            topico: document.getElementById("input-topico").value,
+            pegadinha: document.getElementById("input-pegadinha").value,
+            regra: document.getElementById("input-regra").value,
+            qtd: 1,
+            createdAt: Date.now(),
+          },
+        );
+        document.getElementById("erro-form").reset();
+        window.toggleFormErro();
+        showToast("Falha rastreada!");
+        window.triggerActivity();
+      };
+
+      window.incrementarErro = async function (id, qtd) {
+        if (!currentUser) return;
+        await updateDoc(
+          doc(db, "artifacts", appId, "users", currentUser.uid, "erros", id),
+          { qtd: qtd + 1 },
+        );
+        showToast("Anotado!", "error");
+        window.triggerActivity();
+      };
+      window.deletarErro = async function (id) {
+        if (confirm("Excluir erro permanentemente?")) {
+          if (currentUser)
+            await deleteDoc(
+              doc(
+                db,
+                "artifacts",
+                appId,
+                "users",
+                currentUser.uid,
+                "erros",
+                id,
+              ),
+            );
+        }
+      };
+
+      function renderTabelaErros() {
+        const tbody = document.getElementById("tabela-body");
+        tbody.innerHTML = "";
+        window.cadernoDeErros.forEach((e) => {
+          const tr = document.createElement("tr");
+          tr.className =
+            "hover:bg-slate-50 dark:hover:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800";
+          tr.innerHTML = `<td class="px-5 py-4 align-top"><div class="font-bold text-sm">${e.nomeDisciplina || e.disciplina}</div><div class="text-xs opacity-70">${e.topico}</div></td><td class="px-5 py-4 align-top"><div class="p-3 bg-red-50 dark:bg-red-900/10 text-red-900 dark:text-red-300 text-sm rounded-lg border border-red-100 dark:border-red-900/30">${e.pegadinha}</div></td><td class="px-5 py-4 align-top"><div class="p-3 bg-emerald-50 dark:bg-emerald-900/10 text-emerald-900 dark:text-emerald-300 text-sm rounded-lg font-medium border border-emerald-100 dark:border-emerald-900/30">${e.regra.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")}</div></td><td class="px-5 py-4 align-top text-center"><span class="inline-block w-6 h-6 bg-slate-200 dark:bg-slate-700 rounded-full text-xs font-bold pt-1 mb-2">${e.qtd}</span><br><button onclick="incrementarErro('${e.firebaseId}', ${e.qtd})" class="text-brand-600 hover:text-brand-500 mr-2"><i class="fa-solid fa-arrow-up"></i></button><button onclick="deletarErro('${e.firebaseId}')" class="text-red-500 hover:text-red-400"><i class="fa-solid fa-trash"></i></button></td>`;
+          tbody.appendChild(tr);
+        });
+      }
+
+      window.salvarSimulado = async function (e) {
+        e.preventDefault();
+        if (!currentUser) return;
+        const certas =
+          parseInt(document.getElementById("sim-certas").value) || 0;
+        const erradas =
+          parseInt(document.getElementById("sim-erradas").value) || 0;
+        await addDoc(
+          collection(
+            db,
+            "artifacts",
+            appId,
+            "users",
+            currentUser.uid,
+            "simulados",
+          ),
+          {
+            data: document.getElementById("sim-data").value,
+            certas,
+            erradas,
+            brancos:
+              parseInt(document.getElementById("sim-brancos").value) || 0,
+            notaLiquida: certas - erradas,
+            createdAt: Date.now(),
+          },
+        );
+        document.getElementById("simulado-form").reset();
+        window.toggleFormSimulado();
+        showToast(`Treino salvo!`);
+        window.triggerActivity();
+      };
+
+      window.deletarSimulado = async function (id) {
+        if (confirm("Descartar nota?")) {
+          if (currentUser)
+            await deleteDoc(
+              doc(
+                db,
+                "artifacts",
+                appId,
+                "users",
+                currentUser.uid,
+                "simulados",
+                id,
+              ),
+            );
+        }
+      };
+
+      function renderSimulados() {
+        const lista = document.getElementById("simulados-lista");
+        lista.innerHTML = "";
+        window.simulados.forEach((s) => {
+          lista.innerHTML =
+            `<div class="flex justify-between items-center bg-white dark:bg-darkCard p-3 border border-slate-100 dark:border-slate-800 rounded-xl shadow-sm"><div><div class="text-xs text-slate-400 font-bold">${s.data.split("-").reverse().join("/")}</div><div class="text-sm font-medium">C:${s.certas} | E:${s.erradas} | B:${s.brancos}</div></div><div class="flex items-center gap-4"><div class="text-right"><div class="text-xs opacity-70">Líquida</div><div class="font-extrabold text-xl ${s.notaLiquida > 0 ? "text-emerald-500" : "text-red-500"}">${s.notaLiquida}</div></div><button onclick="deletarSimulado('${s.firebaseId}')" class="text-slate-300 dark:text-slate-600 hover:text-red-500"><i class="fa-solid fa-trash"></i></button></div></div>` +
+            lista.innerHTML;
+        });
+        const ctx = document.getElementById("simuladosChart").getContext("2d");
+        const isDark = document.documentElement.classList.contains("dark");
+        if (charts.simulados) charts.simulados.destroy();
+        charts.simulados = new Chart(ctx, {
+          type: "line",
+          data: {
+            labels: window.simulados.map((s) =>
+              s.data.split("-").reverse().join("/").substring(0, 5),
+            ),
+            datasets: [
+              {
+                label: "Nota Líquida",
+                data: window.simulados.map((s) => s.notaLiquida),
+                borderColor: "#3b82f6",
+                backgroundColor: "rgba(59, 130, 246, 0.1)",
+                borderWidth: 3,
+                fill: true,
+                tension: 0.3,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: {
+                grid: { color: isDark ? "#334155" : "#e2e8f0" },
+                ticks: { color: isDark ? "#cbd5e1" : "#475569" },
+              },
+              y: {
+                beginAtZero: true,
+                grid: { color: isDark ? "#334155" : "#e2e8f0" },
+                ticks: { color: isDark ? "#cbd5e1" : "#475569" },
+              },
+            },
+            plugins: {
+              legend: { labels: { color: isDark ? "#cbd5e1" : "#475569" } },
+            },
+          },
+        });
+      }
+
+      window.initFlashcards = function () {
+        if (window.cadernoDeErros.length === 0) {
+          document
+            .getElementById("flashcard-container")
+            .classList.add("hidden");
+          document.getElementById("flashcard-controls").classList.add("hidden");
+          document.getElementById("flashcard-empty").classList.remove("hidden");
+        } else {
+          document
+            .getElementById("flashcard-container")
+            .classList.remove("hidden");
+          document
+            .getElementById("flashcard-controls")
+            .classList.remove("hidden");
+          document.getElementById("flashcard-empty").classList.add("hidden");
+          fcIndex = 0;
+          document.getElementById("fc-total").innerText =
+            window.cadernoDeErros.length;
+          window.renderFlashcardData();
+        }
+      };
+
+      window.renderFlashcardData = function () {
+        if (window.cadernoDeErros.length === 0) return;
+        const e = window.cadernoDeErros[fcIndex];
+        document.getElementById("fc-disciplina").innerText =
+          `${e.nomeDisciplina || e.disciplina} • ${e.topico}`;
+        document.getElementById("fc-pegadinha").innerText = e.pegadinha;
+        document.getElementById("fc-regra").innerHTML = e.regra.replace(
+          /\*\*(.*?)\*\*/g,
+          "<strong>$1</strong>",
+        );
+        document.getElementById("fc-current").innerText = fcIndex + 1;
+        document
+          .getElementById("flashcard-inner")
+          .closest(".flip-card")
+          ?.classList.remove("flipped");
+      };
+
+      window.flipCard = () =>
+        document
+          .getElementById("flashcard-inner")
+          .parentElement.classList.toggle("flipped");
+      window.nextCard = () => {
+        if (fcIndex < window.cadernoDeErros.length - 1) {
+          fcIndex++;
+          window.renderFlashcardData();
+        }
+      };
+      window.prevCard = () => {
+        if (fcIndex > 0) {
+          fcIndex--;
+          window.renderFlashcardData();
+        }
+      };
+
+      window.navigate = function (viewId) {
+        document
+          .querySelectorAll(".view-section")
+          .forEach((el) => el.classList.remove("active"));
+        document
+          .querySelectorAll("aside nav button")
+          .forEach((el) => el.classList.remove("active"));
+        const vw = document.getElementById(`view-${viewId}`);
+        if (vw) vw.classList.add("active");
+        const btn = document.getElementById(`nav-${viewId}`);
+        if (btn) btn.classList.add("active");
+        document.getElementById("mobile-nav").value = viewId;
+        if (viewId === "dashboard") updateDashboard();
+        if (viewId === "edital") renderEdital();
+        if (viewId === "simulados") renderSimulados();
+        if (viewId === "flashcards") window.initFlashcards();
+      };
+
+      window.toggleFormErro = () =>
+        document
+          .getElementById("form-erro-container")
+          .classList.toggle("hidden");
+      window.toggleFormSimulado = () => {
+        document
+          .getElementById("form-simulado-container")
+          .classList.toggle("hidden");
+        document.getElementById("sim-data").valueAsDate = new Date();
+      };
+
+      let pomoInterval;
+      let pomoTime = 1800;
+      window.togglePomodoro = () => {
+        const p = document.getElementById("pomodoro-panel");
+        p.classList.toggle("hidden");
+        if (p.classList.contains("hidden") && pomoInterval)
+          document.getElementById("pomo-indicator").classList.remove("hidden");
+        else document.getElementById("pomo-indicator").classList.add("hidden");
+      };
+      window.startPomodoro = () => {
+        document.getElementById("pomo-start").classList.add("hidden");
+        document.getElementById("pomo-pause").classList.remove("hidden");
+        document.getElementById("pomo-indicator").classList.remove("hidden");
+        pomoInterval = setInterval(() => {
+          if (pomoTime > 0) {
+            pomoTime--;
+            const m = Math.floor(pomoTime / 60)
+              .toString()
+              .padStart(2, "0");
+            const s = (pomoTime % 60).toString().padStart(2, "0");
+            document.getElementById("pomo-time").innerText = `${m}:${s}`;
+          } else {
+            window.pausePomodoro();
+            window.showToast("Tempo esgotado! Descanse.", "success");
+            window.triggerActivity();
+          }
+        }, 1000);
+      };
+      window.pausePomodoro = () => {
+        clearInterval(pomoInterval);
+        document.getElementById("pomo-start").classList.remove("hidden");
+        document.getElementById("pomo-pause").classList.add("hidden");
+        document.getElementById("pomo-indicator").classList.add("hidden");
+      };
+      window.resetPomodoro = () => {
+        window.pausePomodoro();
+        pomoTime = 1800;
+        document.getElementById("pomo-time").innerText = "30:00";
+      };
+
+      window.showToast = function (msg, type = "success") {
+        const container = document.getElementById("toast-container");
+        const toast = document.createElement("div");
+        const colors =
+          type === "success"
+            ? "bg-emerald-50 dark:bg-emerald-900/30 text-emerald-800 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800"
+            : "bg-red-50 dark:bg-red-900/30 text-red-800 dark:text-red-300 border-red-200 dark:border-red-800";
+        const icon =
+          type === "success"
+            ? "fa-check-circle text-emerald-500"
+            : "fa-triangle-exclamation text-red-500";
+        toast.className = `toast-enter flex items-center p-4 border rounded-xl shadow-lg ${colors} min-w-[250px] backdrop-blur-md z-[60] relative`;
+        toast.innerHTML = `<i class="fa-solid ${icon} text-lg mr-3"></i><p class="font-semibold text-sm">${msg}</p>`;
+        container.appendChild(toast);
+        setTimeout(() => {
+          toast.classList.replace("toast-enter", "toast-leave");
+          setTimeout(() => toast.remove(), 300);
+        }, 3000);
+      };
+    </script>
+  </body>
+</html>
