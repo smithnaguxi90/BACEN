@@ -472,7 +472,6 @@
             id="pomo-disciplina"
             class="w-full text-xs font-bold bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-2 outline-none text-slate-600 dark:text-slate-300"
           >
-            <option value="geral">Sessão Geral (Sem Matéria)</option>
             <!-- Preenchido via JS -->
           </select>
         </div>
@@ -484,19 +483,25 @@
             onclick="setPomodoroTempo(25)"
             class="text-[10px] font-bold bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 px-2 py-1 rounded"
           >
-            25m Foco
+            25m
           </button>
           <button
             onclick="setPomodoroTempo(50)"
             class="text-[10px] font-bold bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 px-2 py-1 rounded"
           >
-            50m Foco
+            50m
+          </button>
+          <button
+            onclick="setPomodoroTempo(120)"
+            class="text-[10px] font-bold bg-amber-100 dark:bg-amber-900/30 hover:bg-amber-200 dark:hover:bg-amber-900/50 text-amber-700 dark:text-amber-400 px-2 py-1 rounded"
+          >
+            2h Rev
           </button>
           <button
             onclick="setPomodoroTempo(5)"
             class="text-[10px] font-bold bg-brand-50 dark:bg-brand-900/30 hover:bg-brand-100 dark:hover:bg-brand-800 text-brand-600 dark:text-brand-400 px-2 py-1 rounded"
           >
-            5m Pausa
+            5m
           </button>
         </div>
 
@@ -682,7 +687,6 @@
             >0</span
           >
         </div>
-        <!-- Alternativa quando colapsado -->
         <div
           class="hidden items-center justify-center w-full icon-only-streak"
           title="Ofensiva"
@@ -814,10 +818,64 @@
             <h2 class="text-2xl md:text-3xl font-extrabold tracking-tight">
               Olá, Jefferson!
             </h2>
-            <p class="text-slate-500 dark:text-slate-400 mt-1">
+            <p class="text-slate-500 dark:text-slate-400 mt-1 mb-3">
               Aqui está o resumo da sua operação BACEN hoje.
             </p>
+
+            <!-- Regras do Cronograma (Gran Cursos) -->
+            <div class="flex flex-wrap gap-2">
+              <span
+                class="bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[10px] sm:text-xs font-bold px-3 py-1.5 rounded-lg flex items-center gap-1.5 border border-slate-300 dark:border-slate-700"
+                ><i class="fa-solid fa-shuffle text-brand-500"></i> Rodízio: 2
+                Videoaulas</span
+              >
+              <span
+                class="bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-400 text-[10px] sm:text-xs font-bold px-3 py-1.5 rounded-lg flex items-center gap-1.5 border border-blue-200 dark:border-blue-800"
+                ><i class="fa-solid fa-calendar-check text-blue-500"></i>
+                Revisão: Domingo (2h)</span
+              >
+              <span
+                class="bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[10px] sm:text-xs font-bold px-3 py-1.5 rounded-lg flex items-center gap-1.5 border border-slate-300 dark:border-slate-700"
+                ><i class="fa-solid fa-forward text-emerald-500"></i>
+                Velocidade: 1x</span
+              >
+            </div>
           </div>
+        </div>
+
+        <!-- Banner de Revisão Gran Cursos (Aparece ao Domingo) -->
+        <div
+          id="gran-revisao-banner"
+          class="hidden mb-8 bg-gradient-to-r from-blue-700 to-indigo-800 rounded-2xl p-6 shadow-xl text-white flex flex-col md:flex-row items-center justify-between gap-4 transform transition-all border border-blue-500/30 relative overflow-hidden"
+        >
+          <i
+            class="fa-solid fa-rotate-left absolute -right-4 -bottom-4 text-8xl text-white/5 pointer-events-none"
+          ></i>
+          <div class="flex items-center gap-5 z-10">
+            <div
+              class="w-14 h-14 bg-white/10 rounded-full flex items-center justify-center text-3xl shrink-0 border border-white/20"
+            >
+              <i class="fa-solid fa-calendar-day"></i>
+            </div>
+            <div>
+              <h3 class="text-xl font-black tracking-tight mb-1">
+                Meta de Domingo: Revisão!
+              </h3>
+              <p class="text-blue-100 font-medium text-sm">
+                Regra do Cronograma: Frequência Semanal • 02:00 Horas
+              </p>
+            </div>
+          </div>
+          <button
+            onclick="
+              navigate('revisoes');
+              setPomodoroTempo(120);
+              togglePomodoro();
+            "
+            class="px-6 py-3 bg-white text-blue-800 hover:bg-slate-50 font-black rounded-xl shadow-lg transition-all hover:scale-105 whitespace-nowrap z-10 flex items-center gap-2"
+          >
+            <i class="fa-solid fa-play"></i> Iniciar Meta de 2h
+          </button>
         </div>
 
         <!-- Top Cards -->
@@ -832,7 +890,7 @@
               </p>
               <div class="flex items-end gap-2">
                 <p class="text-3xl font-extrabold" id="stat-meta-hoje">0</p>
-                <p class="text-sm text-brand-200 font-medium mb-1">/ 100</p>
+                <p class="text-sm text-brand-200 font-medium mb-1">/ 50</p>
               </div>
             </div>
             <div class="w-full bg-black/20 rounded-full h-2 mt-4 relative z-10">
@@ -908,7 +966,7 @@
               </p>
             </div>
             <div
-              class="w-12 h-12 rounded-xl bg-emerald-50 dark:bg-emerald-900/30 text-emerald-50 flex items-center justify-center text-xl"
+              class="w-12 h-12 rounded-xl bg-emerald-50 dark:bg-emerald-900/30 text-emerald-500 flex items-center justify-center text-xl"
             >
               <i class="fa-solid fa-trophy"></i>
             </div>
@@ -918,20 +976,49 @@
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
           <!-- Progresso Macro -->
           <div
-            class="bg-white dark:bg-darkCard p-6 rounded-2xl shadow-soft border border-slate-100 dark:border-slate-800 lg:col-span-2"
+            class="bg-white dark:bg-darkCard p-6 rounded-2xl shadow-soft border border-slate-100 dark:border-slate-800 lg:col-span-3"
           >
             <h3 class="text-lg font-bold mb-6 flex items-center gap-2">
               <i class="fa-solid fa-bars-progress text-brand-500"></i> Progresso
               das Disciplinas
             </h3>
-            <div class="space-y-6" id="progress-container"></div>
+            <div
+              class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+              id="progress-container"
+            ></div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+          <!-- Gráfico de Erros -->
+          <div
+            class="bg-white dark:bg-darkCard p-6 rounded-2xl shadow-soft border border-slate-100 dark:border-slate-800 flex flex-col"
+          >
+            <h3 class="text-lg font-bold mb-2 flex items-center gap-2">
+              <i class="fa-solid fa-chart-pie text-brand-500"></i> Seus Pontos
+              Fracos
+            </h3>
+            <div
+              class="flex-1 flex items-center justify-center relative min-h-[250px]"
+            >
+              <canvas id="errosChart"></canvas>
+              <div
+                id="empty-chart"
+                class="absolute inset-0 flex flex-col items-center justify-center bg-white dark:bg-darkCard hidden"
+              >
+                <i
+                  class="fa-solid fa-ghost text-4xl text-slate-300 dark:text-slate-600 mb-2"
+                ></i>
+                <p class="text-sm text-slate-400 font-medium">Caderno Vazio</p>
+              </div>
+            </div>
           </div>
           <!-- Gráfico de Horas Estudadas -->
           <div
             class="bg-white dark:bg-darkCard p-6 rounded-2xl shadow-soft border border-slate-100 dark:border-slate-800 flex flex-col"
           >
             <h3 class="text-lg font-bold mb-2 flex items-center gap-2">
-              <i class="fa-solid fa-chart-pie text-brand-500"></i> Horas de
+              <i class="fa-solid fa-stopwatch text-brand-500"></i> Horas de
               Estudo Focado
             </h3>
             <div
@@ -981,6 +1068,45 @@
           >
             <!-- Gerado via JS -->
           </div>
+        </div>
+      </section>
+
+      <!-- ================= REVISÕES DO DIA ================= -->
+      <section id="view-revisoes" class="view-section w-full max-w-7xl mx-auto">
+        <header class="mb-8">
+          <h2 class="text-2xl md:text-3xl font-extrabold tracking-tight">
+            Revisões Programadas
+          </h2>
+          <p class="text-slate-500 dark:text-slate-400 mt-1">
+            O algoritmo filtrou os tópicos que atingiram a curva de esquecimento
+            hoje.
+          </p>
+        </header>
+
+        <div
+          id="revisoes-vazio"
+          class="hidden text-center py-20 bg-white dark:bg-darkCard rounded-2xl border border-dashed border-slate-200 dark:border-slate-700"
+        >
+          <i
+            class="fa-solid fa-mug-hot text-6xl text-slate-200 dark:text-slate-700 mb-4"
+          ></i>
+          <p class="text-slate-500 font-bold text-lg">Tudo em dia!</p>
+          <p class="text-slate-400 text-sm mb-6">
+            Não há revisões pendentes para hoje pelo algoritmo.
+          </p>
+          <button
+            onclick="gerarRevisaoExtra()"
+            class="bg-brand-100 hover:bg-brand-200 text-brand-700 dark:bg-brand-900/30 dark:hover:bg-brand-900/50 dark:text-brand-400 px-6 py-2.5 rounded-xl font-bold transition-colors shadow-sm"
+          >
+            <i class="fa-solid fa-shuffle mr-2"></i> Puxar Revisão Aleatória
+          </button>
+        </div>
+
+        <div
+          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+          id="revisoes-lista-container"
+        >
+          <!-- Preenchido via JS -->
         </div>
       </section>
 
@@ -1116,39 +1242,6 @@
           <div class="flex-1 relative w-full">
             <canvas id="acertosChart"></canvas>
           </div>
-        </div>
-      </section>
-
-      <!-- ================= REVISÕES DO DIA ================= -->
-      <section id="view-revisoes" class="view-section w-full max-w-7xl mx-auto">
-        <header class="mb-8">
-          <h2 class="text-2xl md:text-3xl font-extrabold tracking-tight">
-            Revisões Programadas
-          </h2>
-          <p class="text-slate-500 dark:text-slate-400 mt-1">
-            O algoritmo filtrou os tópicos que atingiram a curva de esquecimento
-            hoje.
-          </p>
-        </header>
-
-        <div
-          id="revisoes-vazio"
-          class="hidden text-center py-20 bg-white dark:bg-darkCard rounded-2xl border border-dashed border-slate-200 dark:border-slate-700"
-        >
-          <i
-            class="fa-solid fa-mug-hot text-6xl text-slate-200 dark:text-slate-700 mb-4"
-          ></i>
-          <p class="text-slate-500 font-bold text-lg">Tudo em dia!</p>
-          <p class="text-slate-400 text-sm">
-            Não há revisões pendentes para hoje. Excelente trabalho.
-          </p>
-        </div>
-
-        <div
-          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
-          id="revisoes-lista-container"
-        >
-          <!-- Preenchido via JS -->
         </div>
       </section>
 
@@ -1647,11 +1740,11 @@
         messagingSenderId: "855948660734",
         appId: "1:855948660734:web:f7f3530478805b20c7baaf",
       };
-      const geminiApiKey = ""; // Automático no ambiente
+      const apiKey = ""; // API Key Gemini, gerida dinamicamente no ambiente seguro
 
       const appId = "bacen-hub-local";
       const useLocal = false;
-      const META_DIARIA = 100;
+      const META_DIARIA = 50;
       let metaAtingidaHoje = false;
 
       let app,
@@ -1665,10 +1758,9 @@
         unsubscribeBaterias,
         unsubscribePomo;
 
-      // ORDEM DE EXIBIÇÃO DAS MATÉRIAS
+      // ESTRUTURA LOCAL SEGURA
       const ORDEM_MATERIAS = ["portugues", "bd", "engsoft", "gestao", "admin"];
 
-      // EDITAL COMPLETO
       const EDITAL_TEMPLATE = {
         portugues: {
           nome: "Língua Portuguesa",
@@ -1942,6 +2034,20 @@
         },
       };
 
+      window.editalState = {};
+      window.cadernoDeErros = [];
+      window.simulados = [];
+      window.baterias = [];
+      window.pomodoros = [];
+      window.streakState = { count: 0, lastDate: null };
+      window.heatmapState = {};
+      window.charts = {
+        erros: null,
+        simulados: null,
+        acertos: null,
+        horas: null,
+      };
+
       function syncEdital(savedState) {
         let state = JSON.parse(JSON.stringify(savedState));
         for (const mat in EDITAL_TEMPLATE) {
@@ -1964,34 +2070,39 @@
         return state;
       }
 
-      // Popular selects dinamicamente
-      const selectsToFill = [
-        "filtro-disciplina",
-        "input-disciplina",
-        "qe-disciplina",
-        "bat-disciplina",
-        "pomo-disciplina",
-      ];
-      selectsToFill.forEach((selectId) => {
-        const el = document.getElementById(selectId);
-        if (el) {
-          ORDEM_MATERIAS.forEach((key) => {
-            const opt = document.createElement("option");
-            opt.value = key;
-            opt.text = EDITAL_TEMPLATE[key].nome;
-            el.appendChild(opt);
-          });
-        }
-      });
-
-      window.editalState = {};
-      window.cadernoDeErros = [];
-      window.simulados = [];
-      window.baterias = [];
-      window.pomodoros = [];
-      window.streakState = { count: 0, lastDate: null };
-      window.heatmapState = {};
-      let charts = { erros: null, simulados: null, acertos: null, horas: null };
+      function preencherSelects() {
+        const selectsToFill = [
+          {
+            id: "filtro-disciplina",
+            defVal: "todas",
+            defText: "Todas as Disciplinas",
+          },
+          {
+            id: "input-disciplina",
+            defVal: "",
+            defText: "Escolha a Disciplina...",
+          },
+          { id: "qe-disciplina", defVal: "", defText: "Disciplina..." },
+          { id: "bat-disciplina", defVal: "", defText: "Selecionar..." },
+          {
+            id: "pomo-disciplina",
+            defVal: "geral",
+            defText: "Sessão Geral (Sem Matéria)",
+          },
+        ];
+        selectsToFill.forEach((s) => {
+          const el = document.getElementById(s.id);
+          if (el) {
+            el.innerHTML = `<option value="${s.defVal}" ${s.defVal === "" ? "disabled" : ""} selected>${s.defText}</option>`;
+            ORDEM_MATERIAS.forEach((key) => {
+              const opt = document.createElement("option");
+              opt.value = key;
+              opt.text = EDITAL_TEMPLATE[key].nome;
+              el.appendChild(opt);
+            });
+          }
+        });
+      }
 
       window.toggleTheme = function () {
         document.documentElement.classList.toggle("dark");
@@ -2026,20 +2137,42 @@
             window.matchMedia("(prefers-color-scheme: dark)").matches)
         )
           document.documentElement.classList.add("dark");
-        app = initializeApp(firebaseConfig);
+
+        const fConfig =
+          typeof __firebase_config !== "undefined"
+            ? JSON.parse(__firebase_config)
+            : firebaseConfig;
+        app = initializeApp(fConfig);
         auth = getAuth(app);
         db = getFirestore(app);
-        try {
-          await signInAnonymously(auth);
-        } catch (e) {
-          document.getElementById("loading-overlay").innerHTML =
-            `<p class="text-red-400 font-bold">Erro de Autenticação Firebase.</p>`;
-          return;
-        }
-        onAuthStateChanged(auth, (user) => {
-          if (user) {
+
+        preencherSelects();
+
+        const initAuth = async () => {
+          try {
+            if (
+              typeof __initial_auth_token !== "undefined" &&
+              __initial_auth_token
+            ) {
+              await signInWithCustomToken(auth, __initial_auth_token);
+            } else {
+              await signInAnonymously(auth);
+            }
+          } catch (e) {
+            document.getElementById("loading-overlay").innerHTML =
+              `<p class="text-red-400 font-bold">Erro de Autenticação Firebase.</p>`;
+            console.error("Auth Error:", e);
+          }
+        };
+
+        await initAuth();
+
+        onAuthStateChanged(auth, async (user) => {
+          if (user && !currentUser) {
             currentUser = user;
             setupListeners();
+          } else if (!user) {
+            currentUser = null;
           }
         });
         navigate("dashboard");
@@ -2074,6 +2207,7 @@
             renderRevisoesPainel();
             hideLoading();
           },
+          (error) => console.error(error),
         );
 
         unsubscribeStreak = onSnapshot(
@@ -2089,6 +2223,7 @@
             }
             checkAndUpdateStreakOnLoad();
           },
+          (error) => console.error(error),
         );
 
         onSnapshot(
@@ -2098,6 +2233,7 @@
             else window.heatmapState = {};
             renderHeatmap();
           },
+          (error) => console.error(error),
         );
 
         unsubscribeErros = onSnapshot(
@@ -2111,6 +2247,7 @@
             if (typeof window.initFlashcards === "function")
               window.initFlashcards();
           },
+          (error) => console.error(error),
         );
 
         unsubscribeSimulados = onSnapshot(
@@ -2121,6 +2258,7 @@
               .sort((a, b) => new Date(a.data) - new Date(b.data));
             renderSimulados();
           },
+          (error) => console.error(error),
         );
 
         unsubscribeBaterias = onSnapshot(
@@ -2132,6 +2270,7 @@
             updateDashboard();
             renderBaterias();
           },
+          (error) => console.error(error),
         );
 
         unsubscribePomo = onSnapshot(
@@ -2140,6 +2279,7 @@
             window.pomodoros = snap.docs.map((d) => d.data());
             updateDashboard();
           },
+          (error) => console.error(error),
         );
       }
 
@@ -2209,7 +2349,7 @@
           if ([7, 14, 30].includes(currentCount) || currentCount % 30 === 0) {
             triggerGamification();
             setTimeout(
-              () => showToast(`Marco: ${currentCount} dias! 🏆`),
+              () => showToast(`Marco Histórico: ${currentCount} dias! 🏆`),
               1000,
             );
           }
@@ -2218,12 +2358,12 @@
       };
 
       function renderStreak() {
-        document.getElementById("streak-counter").innerText =
-          window.streakState.count;
-        document.getElementById("streak-counter-mini").innerText =
-          window.streakState.count;
-        document.getElementById("mobile-streak").innerText =
-          window.streakState.count;
+        const el1 = document.getElementById("streak-counter");
+        if (el1) el1.innerText = window.streakState.count;
+        const el2 = document.getElementById("streak-counter-mini");
+        if (el2) el2.innerText = window.streakState.count;
+        const el3 = document.getElementById("mobile-streak");
+        if (el3) el3.innerText = window.streakState.count;
       }
 
       async function salvarEstadoNuvem(chave, estadoObjeto) {
@@ -2270,8 +2410,9 @@
       window.toggleTopico = async function (materiaId, topicoId, checkbox) {
         let newState = JSON.parse(JSON.stringify(window.editalState));
         const materia = newState[materiaId];
-        const topico = materia.topicos.find((t) => t.id === topicoId);
-        const prevConc = materia.topicos.filter((t) => t.concluido).length;
+        const topico = materia?.topicos?.find((t) => t.id === topicoId);
+        const prevConc =
+          materia?.topicos?.filter((t) => t.concluido).length || 0;
 
         if (topico) {
           topico.concluido = checkbox.checked;
@@ -2287,14 +2428,14 @@
             prevConc < materia.topicos.length
           ) {
             triggerGamification();
-            showToast(`Parabéns! Finalizou ${materia.nome}! 🏅`);
+            window.showToast(`Parabéns! Finalizou ${materia.nome}! 🏅`);
           }
         }
       };
 
       window.marcarRevisao = async function (materiaId, topicoId, tipo) {
         let newState = JSON.parse(JSON.stringify(window.editalState));
-        const topico = newState[materiaId].topicos.find(
+        const topico = newState[materiaId]?.topicos?.find(
           (t) => t.id === topicoId,
         );
         if (topico) {
@@ -2303,10 +2444,45 @@
           window.editalState = newState;
           await salvarEstadoNuvem("edital", window.editalState);
           if (topico.rev7 || topico.rev30) {
-            showToast(`Revisão registada! 🧠`);
+            window.showToast(`Revisão registada! 🧠`);
             window.triggerActivity();
           }
         }
+      };
+
+      // --- SISTEMA DE REVISÃO EXTRA (DIA DE REVISÃO) ---
+      window.gerarRevisaoExtra = function () {
+        const container = document.getElementById("revisoes-lista-container");
+        const emptyState = document.getElementById("revisoes-vazio");
+        if (!container || !emptyState) return;
+        let concluidos = [];
+
+        ORDEM_MATERIAS.forEach((mId) => {
+          const materia = window.editalState[mId];
+          if (!materia || !materia.topicos) return;
+          materia.topicos.forEach((t) => {
+            if (t.concluido) concluidos.push({ mId, materia, t });
+          });
+        });
+
+        if (concluidos.length === 0) {
+          window.showToast("Conclua aulas no Edital primeiro!", "error");
+          return;
+        }
+
+        concluidos.sort(() => 0.5 - Math.random());
+        const selecionados = concluidos.slice(0, 4);
+
+        container.innerHTML = "";
+        selecionados.forEach((item) => {
+          const { mId, materia, t } = item;
+          container.innerHTML += `<div class="bg-white dark:bg-darkCard p-4 rounded-xl shadow-sm border border-brand-200 dark:border-brand-800 flex flex-col justify-between h-full relative overflow-hidden"><div class="absolute -right-4 -top-4 w-12 h-12 bg-brand-100 dark:bg-brand-900/30 rounded-full flex items-end justify-start p-2"><i class="fa-solid fa-star text-brand-500 text-[10px]"></i></div><div><div class="flex items-center gap-2 mb-2"><span class="w-3 h-3 rounded-full" style="background-color: ${materia.cor}"></span><span class="text-xs font-bold uppercase tracking-wider text-slate-500">${materia.nome}</span></div><h4 class="font-bold text-slate-800 dark:text-slate-200 mb-4 leading-tight pr-6">${t.nome}</h4></div><div class="flex justify-between items-center mt-auto border-t border-slate-100 dark:border-slate-800 pt-3"><span class="text-xs font-bold px-2 py-1 rounded-md border text-brand-600 bg-brand-50 border-brand-200 dark:text-brand-400 dark:bg-brand-900/30 dark:border-brand-800">Extra</span><button onclick="renderRevisoesPainel(); window.showToast('Revisão extra concluída! 🌟')" class="bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 px-3 py-1.5 rounded-lg transition-colors text-sm font-bold text-slate-600 dark:text-slate-300"><i class="fa-solid fa-check mr-1 text-emerald-500"></i> Feito</button></div></div>`;
+        });
+
+        emptyState.classList.add("hidden");
+        container.classList.remove("hidden");
+        window.showToast("Bateria Extra gerada!");
+        triggerGamification();
       };
 
       function renderRevisoesPainel() {
@@ -2317,7 +2493,7 @@
         let countRev = 0;
         ORDEM_MATERIAS.forEach((mId) => {
           const materia = window.editalState[mId];
-          if (!materia) return;
+          if (!materia || !materia.topicos) return;
           materia.topicos.forEach((t) => {
             if (!t.concluido) return;
             const daysSince = Math.floor(
@@ -2337,7 +2513,7 @@
                 typePendente === 7
                   ? "dark:text-indigo-300 dark:bg-indigo-900/30 dark:border-indigo-800"
                   : "dark:text-purple-300 dark:bg-purple-900/30 dark:border-purple-800";
-              container.innerHTML += `<div class="bg-white dark:bg-darkCard p-4 rounded-xl shadow-sm border border-slate-100 dark:border-slate-800 flex flex-col justify-between h-full"><div><div class="flex items-center gap-2 mb-2"><span class="w-3 h-3 rounded-full" style="background-color: ${materia.cor}"></span><span class="text-xs font-bold uppercase tracking-wider text-slate-500">${materia.nome}</span></div><h4 class="font-bold text-slate-800 dark:text-slate-200 mb-4 leading-tight">${t.nome}</h4></div><div class="flex justify-between items-center mt-auto border-t border-slate-100 dark:border-slate-800 pt-3"><span class="text-xs font-bold px-2 py-1 rounded-md border ${colorClass} ${darkClass}">Alvo: ${typePendente} Dias</span><label class="flex items-center gap-2 cursor-pointer bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 px-3 py-1.5 rounded-lg transition-colors"><input type="checkbox" onchange="marcarRevisao('${mId}', '${t.id}', ${typePendente})" class="w-4 h-4 rounded accent-brand-500"><span class="text-sm font-bold text-slate-600 dark:text-slate-300">Feito</span></label></div></div>`;
+              container.innerHTML += `<div class="bg-white dark:bg-darkCard p-4 rounded-xl shadow-sm border border-slate-100 dark:border-slate-800 flex flex-col justify-between h-full"><div><div class="flex items-center gap-2 mb-2"><span class="w-3 h-3 rounded-full" style="background-color: ${materia.cor}"></span><span class="text-xs font-bold uppercase tracking-wider text-slate-500">${materia.nome}</span></div><h4 class="font-bold text-slate-800 dark:text-slate-200 mb-4 leading-tight">${t.nome}</h4></div><div class="flex justify-between items-center mt-auto border-t border-slate-100 dark:border-slate-800 pt-3"><span class="text-xs font-bold px-2 py-1 rounded-md border ${colorClass} ${darkClass}">Alvo: ${typePendente} Dias</span><label class="flex items-center gap-2 cursor-pointer bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 px-3 py-1.5 rounded-lg transition-colors"><input type="checkbox" onchange="window.marcarRevisao('${mId}', '${t.id}', ${typePendente})" class="w-4 h-4 rounded accent-brand-500"><span class="text-sm font-bold text-slate-600 dark:text-slate-300">Feito</span></label></div></div>`;
             }
           });
         });
@@ -2367,12 +2543,12 @@
         container.innerHTML = "";
         ORDEM_MATERIAS.forEach((mId) => {
           const materia = window.editalState[mId];
-          if (!materia) return;
+          if (!materia || !materia.topicos) return;
           let topicosHtml = "";
           let concluidos = 0;
           materia.topicos.forEach((t) => {
             if (t.concluido) concluidos++;
-            topicosHtml += `<div class="flex flex-col p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/50 transition border border-transparent hover:border-slate-200 dark:hover:border-slate-700 group"><label class="flex items-start cursor-pointer"><input type="checkbox" onchange="toggleTopico('${mId}', '${t.id}', this)" class="custom-check mt-0.5 text-brand-500" ${t.concluido ? "checked" : ""}><div class="ml-3 flex-1"><span class="${t.concluido ? "line-through text-slate-400 dark:text-slate-500" : "text-slate-700 dark:text-slate-200"} font-medium text-sm transition-colors">${t.nome}</span></div></label>${t.concluido ? `<div class="ml-8 mt-2 flex gap-3 opacity-90"><label class="text-xs font-bold ${t.rev7 ? "text-indigo-600 dark:text-indigo-400" : "text-slate-400"} flex items-center gap-1 cursor-pointer transition"><input type="checkbox" onchange="marcarRevisao('${mId}', '${t.id}', 7)" ${t.rev7 ? "checked" : ""} class="w-3 h-3 rounded accent-indigo-500"> Rev 7D</label><label class="text-xs font-bold ${t.rev30 ? "text-purple-600 dark:text-purple-400" : "text-slate-400"} flex items-center gap-1 cursor-pointer transition"><input type="checkbox" onchange="marcarRevisao('${mId}', '${t.id}', 30)" ${t.rev30 ? "checked" : ""} class="w-3 h-3 rounded accent-purple-500"> Rev 30D</label></div>` : ""}</div>`;
+            topicosHtml += `<div class="flex flex-col p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/50 transition border border-transparent hover:border-slate-200 dark:hover:border-slate-700 group"><label class="flex items-start cursor-pointer"><input type="checkbox" onchange="window.toggleTopico('${mId}', '${t.id}', this)" class="custom-check mt-0.5 text-brand-500" ${t.concluido ? "checked" : ""}><div class="ml-3 flex-1"><span class="${t.concluido ? "line-through text-slate-400 dark:text-slate-500" : "text-slate-700 dark:text-slate-200"} font-medium text-sm transition-colors">${t.nome}</span></div></label>${t.concluido ? `<div class="ml-8 mt-2 flex gap-3 opacity-90"><label class="text-xs font-bold ${t.rev7 ? "text-indigo-600 dark:text-indigo-400" : "text-slate-400"} flex items-center gap-1 cursor-pointer transition"><input type="checkbox" onchange="window.marcarRevisao('${mId}', '${t.id}', 7)" ${t.rev7 ? "checked" : ""} class="w-3 h-3 rounded accent-indigo-500"> Rev 7D</label><label class="text-xs font-bold ${t.rev30 ? "text-purple-600 dark:text-purple-400" : "text-slate-400"} flex items-center gap-1 cursor-pointer transition"><input type="checkbox" onchange="window.marcarRevisao('${mId}', '${t.id}', 30)" ${t.rev30 ? "checked" : ""} class="w-3 h-3 rounded accent-purple-500"> Rev 30D</label></div>` : ""}</div>`;
           });
           container.innerHTML += `<div class="bg-white dark:bg-darkCard rounded-2xl shadow-soft border border-slate-100 dark:border-slate-800 overflow-hidden"><div class="px-5 py-4 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 flex justify-between items-center"><h3 class="font-bold text-slate-800 dark:text-white flex items-center gap-2"><span class="w-3 h-3 rounded-full" style="background-color: ${materia.cor}"></span> ${materia.nome}</h3><span class="text-xs font-bold text-slate-500">${concluidos}/${materia.topicos.length}</span></div><div class="p-2">${topicosHtml}</div></div>`;
         });
@@ -2386,8 +2562,8 @@
           tConc = 0;
         ORDEM_MATERIAS.forEach((mId) => {
           const materia = window.editalState[mId];
-          if (!materia) return;
-          let mTotal = materia.topicos.length;
+          if (!materia || !materia.topicos) return;
+          let mTotal = materia.topicos.length || 0;
           let mConc = 0;
           materia.topicos.forEach((t) => {
             tTotal++;
@@ -2399,27 +2575,33 @@
           const perc = mTotal > 0 ? Math.round((mConc / mTotal) * 100) : 0;
           container.innerHTML += `<div><div class="flex justify-between items-end mb-2"><div><span class="font-bold text-sm">${materia.nome}</span><span class="text-xs text-slate-400 ml-2">${mConc}/${mTotal} Tópicos</span></div><span class="text-xs font-bold">${perc}%</span></div><div class="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-2.5 overflow-hidden"><div class="h-2.5 rounded-full transition-all duration-1000" style="width: ${perc}%; background-color: ${materia.cor};"></div></div></div>`;
         });
-        document.getElementById("stat-aulas").innerText =
-          `${tConc} / ${tTotal}`;
-        document.getElementById("stat-erros").innerText =
-          window.cadernoDeErros.length;
-        document.getElementById("stat-taxa").innerText =
-          `${tTotal > 0 ? Math.round((tConc / tTotal) * 100) : 0}%`;
+
+        const elAulas = document.getElementById("stat-aulas");
+        if (elAulas) elAulas.innerText = `${tConc} / ${tTotal}`;
+        const elErros = document.getElementById("stat-erros");
+        if (elErros) elErros.innerText = (window.cadernoDeErros || []).length;
+        const elTaxa = document.getElementById("stat-taxa");
+        if (elTaxa)
+          elTaxa.innerText = `${tTotal > 0 ? Math.round((tConc / tTotal) * 100) : 0}%`;
 
         // Meta Diária
         const todayStr = getTodayStr();
-        const questoesHoje = window.baterias
+        const segurasBaterias = window.baterias || [];
+        const questoesHoje = segurasBaterias
           .filter((b) => {
+            if (!b.createdAt) return false;
             const d = new Date(b.createdAt);
             d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
             return d.toISOString().split("T")[0] === todayStr;
           })
-          .reduce((acc, curr) => acc + curr.resolvidas, 0);
+          .reduce((acc, curr) => acc + (curr.resolvidas || 0), 0);
 
-        document.getElementById("stat-meta-hoje").innerText = questoesHoje;
+        const elMetaHoje = document.getElementById("stat-meta-hoje");
+        if (elMetaHoje) elMetaHoje.innerText = questoesHoje;
         let percMeta = Math.round((questoesHoje / META_DIARIA) * 100);
         if (percMeta > 100) percMeta = 100;
-        document.getElementById("bar-meta-hoje").style.width = `${percMeta}%`;
+        const barMeta = document.getElementById("bar-meta-hoje");
+        if (barMeta) barMeta.style.width = `${percMeta}%`;
 
         if (percMeta === 100 && !metaAtingidaHoje) {
           metaAtingidaHoje = true;
@@ -2427,18 +2609,27 @@
           showToast("Meta Diária Atingida! 🎯", "success");
         }
 
+        // Banner de Domingo
+        const todayDate = new Date();
+        const isSunday = todayDate.getDay() === 0;
+        const bannerGran = document.getElementById("gran-revisao-banner");
+        if (bannerGran) {
+          if (isSunday) bannerGran.classList.remove("hidden");
+          else bannerGran.classList.add("hidden");
+        }
+
         const isDark = document.documentElement.classList.contains("dark");
 
         // Gráfico Erros
-        const errosCanvas = document.getElementById("errosChart");
-        if (errosCanvas) {
-          const ctxErr = errosCanvas.getContext("2d");
+        const canvasErr = document.getElementById("errosChart");
+        if (canvasErr) {
+          const ctxErr = canvasErr.getContext("2d");
           let errorCount = {};
           for (const key of Object.keys(window.editalState))
             errorCount[key] = 0;
-          window.cadernoDeErros.forEach((e) => {
+          (window.cadernoDeErros || []).forEach((e) => {
             if (errorCount[e.disciplina] !== undefined)
-              errorCount[e.disciplina] += e.qtd;
+              errorCount[e.disciplina] += e.qtd || 1;
           });
           let labelsE = [],
             dataE = [],
@@ -2451,13 +2642,14 @@
               colorsE.push(m.cor);
             }
           });
-          const emptyChart = document.getElementById("empty-chart");
-          if (emptyChart) {
-            if (dataE.length === 0) emptyChart.classList.remove("hidden");
-            else emptyChart.classList.add("hidden");
+          const emptyChartEl = document.getElementById("empty-chart");
+          if (emptyChartEl) {
+            if (dataE.length === 0) emptyChartEl.classList.remove("hidden");
+            else emptyChartEl.classList.add("hidden");
           }
-          if (charts.erros) charts.erros.destroy();
-          charts.erros = new Chart(ctxErr, {
+          if (window.charts && window.charts.erros)
+            window.charts.erros.destroy();
+          window.charts.erros = new Chart(ctxErr, {
             type: "doughnut",
             data: {
               labels: labelsE,
@@ -2483,13 +2675,13 @@
         }
 
         // Gráfico Horas
-        const horasCanvas = document.getElementById("horasChart");
-        if (horasCanvas) {
-          const ctxHr = horasCanvas.getContext("2d");
+        const canvasHr = document.getElementById("horasChart");
+        if (canvasHr) {
+          const ctxHr = canvasHr.getContext("2d");
           let hrCount = {};
-          window.pomodoros.forEach((p) => {
+          (window.pomodoros || []).forEach((p) => {
             const key = p.disciplina || "geral";
-            hrCount[key] = (hrCount[key] || 0) + p.minutos;
+            hrCount[key] = (hrCount[key] || 0) + (p.minutos || 0);
           });
           let labelsH = [],
             dataH = [],
@@ -2506,13 +2698,14 @@
             dataH.push((hrCount["geral"] / 60).toFixed(1));
             colorsH.push("#64748b");
           }
-          const emptyHorasChart = document.getElementById("empty-horas-chart");
-          if (emptyHorasChart) {
-            if (dataH.length === 0) emptyHorasChart.classList.remove("hidden");
-            else emptyHorasChart.classList.add("hidden");
+          const emptyHorasEl = document.getElementById("empty-horas-chart");
+          if (emptyHorasEl) {
+            if (dataH.length === 0) emptyHorasEl.classList.remove("hidden");
+            else emptyHorasEl.classList.add("hidden");
           }
-          if (charts.horas) charts.horas.destroy();
-          charts.horas = new Chart(ctxHr, {
+          if (window.charts && window.charts.horas)
+            window.charts.horas.destroy();
+          window.charts.horas = new Chart(ctxHr, {
             type: "pie",
             data: {
               labels: labelsH,
@@ -2619,10 +2812,13 @@
         try {
           const promptText = `Aja como um professor especialista em concursos públicos (com foco no BACEN). O aluno errou uma questão de ${topico}. Pegadinha: "${pegadinha}". Regra correta: "${regra}". Crie uma explicação hiper simplificada de 1 parágrafo e, a seguir, crie uma mnemónica ou analogia super memorável para ele nunca mais errar. Responda em Português, direto ao ponto e formate com Markdown.`;
           let attempt = 0;
-          while (attempt < 3) {
+          let success = false;
+          const delays = [1000, 2000, 4000, 8000, 16000];
+
+          while (attempt < 5 && !success) {
             try {
               const response = await fetch(
-                `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${geminiApiKey}`,
+                `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`,
                 {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
@@ -2645,15 +2841,21 @@
                   )
                   .replace(/\n/g, "<br>");
                 contentDiv.innerHTML = `<div class="text-left text-base text-slate-700 dark:text-slate-300 leading-relaxed space-y-4">${parsed}</div>`;
+                success = true;
                 return;
+              } else {
+                throw new Error("Invalid response format");
               }
             } catch (e) {
+              if (attempt < 4)
+                await new Promise((r) => setTimeout(r, delays[attempt]));
               attempt++;
-              await new Promise((r) => setTimeout(r, 1500));
             }
           }
-          contentDiv.innerHTML =
-            '<p class="text-red-500 font-bold">⚠️ Erro ao contactar a IA. Tente mais tarde ou verifique a conexão.</p>';
+          if (!success) {
+            contentDiv.innerHTML =
+              '<p class="text-red-500 font-bold">⚠️ Erro ao contactar o Professor IA. Tente mais tarde ou verifique a conexão.</p>';
+          }
         } catch (e) {
           console.error(e);
         }
@@ -2687,9 +2889,12 @@
 
       window.renderTabelaErros = function () {
         const tbody = document.getElementById("tabela-body");
+        if (!tbody) return;
         tbody.innerHTML = "";
-        const filtro = document.getElementById("filtro-disciplina").value;
-        let errosFiltrados = window.cadernoDeErros;
+
+        const filtroEl = document.getElementById("filtro-disciplina");
+        const filtro = filtroEl ? filtroEl.value : "todas";
+        let errosFiltrados = window.cadernoDeErros || [];
         if (filtro !== "todas")
           errosFiltrados = errosFiltrados.filter(
             (e) => e.disciplina === filtro,
@@ -2704,7 +2909,7 @@
           const tr = document.createElement("tr");
           tr.className =
             "hover:bg-slate-50 dark:hover:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800 transition-colors";
-          tr.innerHTML = `<td class="px-5 py-4 align-top"><div class="font-bold text-sm text-brand-600 dark:text-brand-400">${e.nomeDisciplina || e.disciplina}</div><div class="text-xs opacity-70 mt-1"><i class="fa-solid fa-angle-right mr-1"></i>${e.topico}</div></td><td class="px-5 py-4 align-top"><div class="p-3 bg-red-50 dark:bg-red-900/10 text-red-900 dark:text-red-300 text-sm rounded-lg border border-red-100 dark:border-red-900/30 leading-relaxed">${e.pegadinha}</div></td><td class="px-5 py-4 align-top"><div class="p-3 bg-emerald-50 dark:bg-emerald-900/10 text-emerald-900 dark:text-emerald-300 text-sm rounded-lg font-medium border border-emerald-100 dark:border-emerald-900/30 leading-relaxed">${e.regra.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")}</div></td><td class="px-5 py-4 align-top text-center no-print"><span class="inline-block w-6 h-6 bg-slate-200 dark:bg-slate-700 rounded-full text-xs font-bold pt-1 mb-2">${e.qtd}</span><br><button onclick="explicarComIA('${e.topico.replace(/'/g, "\\'")}', '${e.regra.replace(/'/g, "\\'")}', '${e.pegadinha.replace(/'/g, "\\'")}')" class="text-indigo-500 hover:text-indigo-400 transition-transform hover:scale-110 mr-2" title="Explicar com IA"><i class="fa-solid fa-wand-magic-sparkles"></i></button><button onclick="incrementarErro('${e.firebaseId}', ${e.qtd})" class="text-brand-600 hover:text-brand-500 mr-2 transition-transform hover:scale-110" title="Errei novamente"><i class="fa-solid fa-arrow-up"></i></button><button onclick="deletarErro('${e.firebaseId}')" class="text-red-500 hover:text-red-400 transition-transform hover:scale-110" title="Apagar"><i class="fa-solid fa-trash"></i></button></td>`;
+          tr.innerHTML = `<td class="px-5 py-4 align-top"><div class="font-bold text-sm text-brand-600 dark:text-brand-400">${e.nomeDisciplina || e.disciplina}</div><div class="text-xs opacity-70 mt-1"><i class="fa-solid fa-angle-right mr-1"></i>${e.topico}</div></td><td class="px-5 py-4 align-top"><div class="p-3 bg-red-50 dark:bg-red-900/10 text-red-900 dark:text-red-300 text-sm rounded-lg border border-red-100 dark:border-red-900/30 leading-relaxed">${e.pegadinha}</div></td><td class="px-5 py-4 align-top"><div class="p-3 bg-emerald-50 dark:bg-emerald-900/10 text-emerald-900 dark:text-emerald-300 text-sm rounded-lg font-medium border border-emerald-100 dark:border-emerald-900/30 leading-relaxed">${e.regra.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")}</div></td><td class="px-5 py-4 align-top text-center no-print"><span class="inline-block w-6 h-6 bg-slate-200 dark:bg-slate-700 rounded-full text-xs font-bold pt-1 mb-2">${e.qtd}</span><br><button onclick="window.explicarComIA('${e.topico.replace(/'/g, "\\'")}', '${e.regra.replace(/'/g, "\\'")}', '${e.pegadinha.replace(/'/g, "\\'")}')" class="text-indigo-500 hover:text-indigo-400 transition-transform hover:scale-110 mr-2" title="Explicar com IA"><i class="fa-solid fa-wand-magic-sparkles"></i></button><button onclick="window.incrementarErro('${e.firebaseId}', ${e.qtd})" class="text-brand-600 hover:text-brand-500 mr-2 transition-transform hover:scale-110" title="Errei novamente"><i class="fa-solid fa-arrow-up"></i></button><button onclick="window.deletarErro('${e.firebaseId}')" class="text-red-500 hover:text-red-400 transition-transform hover:scale-110" title="Apagar"><i class="fa-solid fa-trash"></i></button></td>`;
           tbody.appendChild(tr);
         });
       };
@@ -2793,9 +2998,9 @@
       };
 
       function renderBaterias() {
-        const acertosCanvas = document.getElementById("acertosChart");
-        if (!acertosCanvas) return;
-        const ctx = acertosCanvas.getContext("2d");
+        const canvasAcertos = document.getElementById("acertosChart");
+        if (!canvasAcertos) return;
+        const ctx = canvasAcertos.getContext("2d");
         let stats = {};
         ORDEM_MATERIAS.forEach((key) => {
           stats[key] = {
@@ -2805,10 +3010,10 @@
             cor: EDITAL_TEMPLATE[key].cor,
           };
         });
-        window.baterias.forEach((b) => {
+        (window.baterias || []).forEach((b) => {
           if (stats[b.disciplina]) {
-            stats[b.disciplina].resolvidas += b.resolvidas;
-            stats[b.disciplina].certas += b.certas;
+            stats[b.disciplina].resolvidas += b.resolvidas || 0;
+            stats[b.disciplina].certas += b.certas || 0;
           }
         });
 
@@ -2826,8 +3031,9 @@
         });
 
         const isDark = document.documentElement.classList.contains("dark");
-        if (charts.acertos) charts.acertos.destroy();
-        charts.acertos = new Chart(ctx, {
+        if (window.charts && window.charts.acertos)
+          window.charts.acertos.destroy();
+        window.charts.acertos = new Chart(ctx, {
           type: "bar",
           data: {
             labels,
@@ -2872,27 +3078,33 @@
 
       // --- SIMULADOS & MODO HARDCORE ---
       let hardcoreInterval;
-      window.toggleHardcoreMode = function () {
+      window.toggleHardcoreMode = async function () {
         const el = document.documentElement;
         const overlay = document.getElementById("hardcore-overlay");
         const isHardcoreActive = !overlay.classList.contains("hidden");
 
         if (!isHardcoreActive) {
-          try {
-            const fsPromise = el.requestFullscreen
-              ? el.requestFullscreen()
-              : el.webkitRequestFullscreen
-                ? el.webkitRequestFullscreen()
-                : null;
-            if (fsPromise !== undefined && fsPromise !== null)
-              fsPromise.catch((err) =>
-                console.warn(
-                  "Fullscreen não permitido no ambiente atual.",
-                  err,
-                ),
-              );
-          } catch (e) {
-            console.warn("Fullscreen API bloqueada:", e);
+          if (document.fullscreenEnabled) {
+            try {
+              if (el.requestFullscreen) {
+                await el
+                  .requestFullscreen()
+                  .catch((err) =>
+                    console.warn(
+                      "Fullscreen bloqueado pelas políticas de segurança.",
+                      err,
+                    ),
+                  );
+              } else if (el.webkitRequestFullscreen) {
+                el.webkitRequestFullscreen();
+              }
+            } catch (e) {
+              console.warn("Fullscreen API falhou:", e);
+            }
+          } else {
+            console.warn(
+              "Fullscreen desativado no ambiente atual. Modo janela ativado.",
+            );
           }
 
           overlay.classList.remove("hidden");
@@ -2914,21 +3126,19 @@
             }
           }, 1000);
         } else {
-          try {
-            if (
-              document.fullscreenElement ||
-              document.webkitFullscreenElement
-            ) {
-              const exitPromise = document.exitFullscreen
-                ? document.exitFullscreen()
-                : document.webkitExitFullscreen
-                  ? document.webkitExitFullscreen()
-                  : null;
-              if (exitPromise !== undefined && exitPromise !== null)
-                exitPromise.catch((e) => console.warn(e));
+          if (
+            document.fullscreenEnabled &&
+            (document.fullscreenElement || document.webkitFullscreenElement)
+          ) {
+            try {
+              if (document.exitFullscreen) {
+                await document.exitFullscreen().catch((e) => console.warn(e));
+              } else if (document.webkitExitFullscreen) {
+                document.webkitExitFullscreen();
+              }
+            } catch (e) {
+              console.warn("Sair do Fullscreen falhou:", e);
             }
-          } catch (e) {
-            console.warn("Exit Fullscreen API bloqueada:", e);
           }
 
           overlay.classList.add("hidden");
@@ -2988,39 +3198,44 @@
 
       function renderSimulados() {
         const lista = document.getElementById("simulados-lista");
+        if (!lista) return;
         lista.innerHTML = "";
+
         let maxNota = -999;
         let soma = 0;
-        window.simulados.forEach((s) => {
+        const segurasSimulados = window.simulados || [];
+        segurasSimulados.forEach((s) => {
           if (s.notaLiquida > maxNota) maxNota = s.notaLiquida;
           soma += s.notaLiquida;
           lista.innerHTML =
-            `<div class="flex justify-between items-center bg-white dark:bg-darkCard p-3 border border-slate-100 dark:border-slate-800 rounded-xl shadow-sm transition-transform hover:-translate-y-0.5"><div><div class="text-xs text-slate-400 font-bold"><i class="fa-regular fa-calendar mr-1"></i>${s.data.split("-").reverse().join("/")}</div><div class="text-sm font-medium mt-1">C:${s.certas} | E:${s.erradas} | B:${s.brancos}</div></div><div class="flex items-center gap-4"><div class="text-right"><div class="text-[10px] uppercase font-bold text-slate-400 tracking-widest">Líquida</div><div class="font-extrabold text-xl ${s.notaLiquida > 0 ? "text-emerald-500" : "text-red-500"}">${s.notaLiquida}</div></div><button onclick="deletarSimulado('${s.firebaseId}')" class="text-slate-300 dark:text-slate-600 hover:text-red-500 transition-colors p-2"><i class="fa-solid fa-trash"></i></button></div></div>` +
+            `<div class="flex justify-between items-center bg-white dark:bg-darkCard p-3 border border-slate-100 dark:border-slate-800 rounded-xl shadow-sm transition-transform hover:-translate-y-0.5"><div><div class="text-xs text-slate-400 font-bold"><i class="fa-regular fa-calendar mr-1"></i>${s.data.split("-").reverse().join("/")}</div><div class="text-sm font-medium mt-1">C:${s.certas} | E:${s.erradas} | B:${s.brancos}</div></div><div class="flex items-center gap-4"><div class="text-right"><div class="text-[10px] uppercase font-bold text-slate-400 tracking-widest">Líquida</div><div class="font-extrabold text-xl ${s.notaLiquida > 0 ? "text-emerald-500" : "text-red-500"}">${s.notaLiquida}</div></div><button onclick="window.deletarSimulado('${s.firebaseId}')" class="text-slate-300 dark:text-slate-600 hover:text-red-500 transition-colors p-2"><i class="fa-solid fa-trash"></i></button></div></div>` +
             lista.innerHTML;
         });
 
-        document.getElementById("sim-media").innerText =
-          window.simulados.length > 0
-            ? (soma / window.simulados.length).toFixed(1)
-            : 0;
-        document.getElementById("sim-recorde").innerText =
-          maxNota === -999 ? 0 : maxNota;
+        const elMedia = document.getElementById("sim-media");
+        if (elMedia)
+          elMedia.innerText =
+            segurasSimulados.length > 0
+              ? (soma / segurasSimulados.length).toFixed(1)
+              : 0;
+        const elRecorde = document.getElementById("sim-recorde");
+        if (elRecorde) elRecorde.innerText = maxNota === -999 ? 0 : maxNota;
 
-        const simuladosCanvas = document.getElementById("simuladosChart");
-        if (simuladosCanvas) {
-          const ctx = simuladosCanvas.getContext("2d");
+        const canvasSim = document.getElementById("simuladosChart");
+        if (canvasSim) {
+          const ctx = canvasSim.getContext("2d");
           const isDark = document.documentElement.classList.contains("dark");
-          if (charts.simulados) charts.simulados.destroy();
-          charts.simulados = new Chart(ctx, {
+          if (window.charts.simulados) window.charts.simulados.destroy();
+          window.charts.simulados = new Chart(ctx, {
             type: "line",
             data: {
-              labels: window.simulados.map((s) =>
+              labels: segurasSimulados.map((s) =>
                 s.data.split("-").reverse().join("/").substring(0, 5),
               ),
               datasets: [
                 {
                   label: "Nota Líquida",
-                  data: window.simulados.map((s) => s.notaLiquida),
+                  data: segurasSimulados.map((s) => s.notaLiquida),
                   borderColor: "#3b82f6",
                   backgroundColor: "rgba(59, 130, 246, 0.1)",
                   borderWidth: 3,
@@ -3081,20 +3296,20 @@
       let dueFlashcards = [];
       window.initFlashcards = function () {
         const now = Date.now();
-        dueFlashcards = window.cadernoDeErros.filter(
+        dueFlashcards = (window.cadernoDeErros || []).filter(
           (e) => !e.nextReview || e.nextReview <= now,
         );
 
+        const wrapper = document.getElementById("flashcard-ui-wrapper");
+        const empty = document.getElementById("flashcard-empty");
+        if (!wrapper || !empty) return;
+
         if (dueFlashcards.length === 0) {
-          document
-            .getElementById("flashcard-ui-wrapper")
-            .classList.add("hidden");
-          document.getElementById("flashcard-empty").classList.remove("hidden");
+          wrapper.classList.add("hidden");
+          empty.classList.remove("hidden");
         } else {
-          document
-            .getElementById("flashcard-ui-wrapper")
-            .classList.remove("hidden");
-          document.getElementById("flashcard-empty").classList.add("hidden");
+          wrapper.classList.remove("hidden");
+          empty.classList.add("hidden");
           fcIndex = 0;
           window.renderFlashcardData();
         }
@@ -3106,31 +3321,41 @@
           return;
         }
         const e = dueFlashcards[fcIndex];
-        document.getElementById("fc-total").innerText = dueFlashcards.length;
-        document.getElementById("fc-disciplina").innerText =
-          `${e.nomeDisciplina || e.disciplina} • ${e.topico}`;
-        document.getElementById("fc-pegadinha").innerText = e.pegadinha;
-        document.getElementById("fc-regra").innerHTML = e.regra.replace(
-          /\*\*(.*?)\*\*/g,
-          "<strong>$1</strong>",
-        );
-        document
-          .getElementById("flashcard-inner")
-          .closest(".flip-card")
-          ?.classList.remove("flipped");
+        const elTot = document.getElementById("fc-total");
+        if (elTot) elTot.innerText = dueFlashcards.length;
+        const elDisc = document.getElementById("fc-disciplina");
+        if (elDisc)
+          elDisc.innerText = `${e.nomeDisciplina || e.disciplina} • ${e.topico}`;
+        const elPeg = document.getElementById("fc-pegadinha");
+        if (elPeg) elPeg.innerText = e.pegadinha;
+        const elReg = document.getElementById("fc-regra");
+        if (elReg)
+          elReg.innerHTML = e.regra.replace(
+            /\*\*(.*?)\*\*/g,
+            "<strong>$1</strong>",
+          );
+
+        const cardInner = document.getElementById("flashcard-inner");
+        if (cardInner && cardInner.closest(".flip-card"))
+          cardInner.closest(".flip-card").classList.remove("flipped");
 
         // Textos dos botões baseados no intervalo anterior
         const prevInt = e.interval || 0;
-        document.getElementById("fc-btn-hard").innerText =
-          prevInt === 0 ? "+1 dia" : `+${Math.round(prevInt * 1.5)}d`;
-        document.getElementById("fc-btn-easy").innerText =
-          prevInt === 0 ? "+4 dias" : `+${Math.round(prevInt * 2.5)}d`;
+        const btnHard = document.getElementById("fc-btn-hard");
+        if (btnHard)
+          btnHard.innerText =
+            prevInt === 0 ? "+1 dia" : `+${Math.round(prevInt * 1.5)}d`;
+        const btnEasy = document.getElementById("fc-btn-easy");
+        if (btnEasy)
+          btnEasy.innerText =
+            prevInt === 0 ? "+4 dias" : `+${Math.round(prevInt * 2.5)}d`;
       };
 
-      window.flipCard = () =>
-        document
-          .getElementById("flashcard-inner")
-          .parentElement.classList.toggle("flipped");
+      window.flipCard = () => {
+        const inner = document.getElementById("flashcard-inner");
+        if (inner && inner.parentElement)
+          inner.parentElement.classList.toggle("flipped");
+      };
 
       window.answerFlashcard = async function (quality) {
         if (!currentUser || dueFlashcards.length === 0) return;
@@ -3190,15 +3415,15 @@
         if (viewId === "baterias") renderBaterias();
       };
 
-      window.toggleFormErro = () =>
-        document
-          .getElementById("form-erro-container")
-          .classList.toggle("hidden");
+      window.toggleFormErro = () => {
+        const form = document.getElementById("form-erro-container");
+        if (form) form.classList.toggle("hidden");
+      };
       window.toggleFormSimulado = () => {
-        document
-          .getElementById("form-simulado-container")
-          .classList.toggle("hidden");
-        document.getElementById("sim-data").valueAsDate = new Date();
+        const form = document.getElementById("form-simulado-container");
+        if (form) form.classList.toggle("hidden");
+        const dateInput = document.getElementById("sim-data");
+        if (dateInput) dateInput.valueAsDate = new Date();
       };
 
       // --- POMODORO ---
@@ -3243,23 +3468,37 @@
           .toString()
           .padStart(2, "0");
         const s = (pomoTime % 60).toString().padStart(2, "0");
-        document.getElementById("pomo-time").innerText = `${m}:${s}`;
-        document.getElementById("pomo-status").innerText =
-          minutos === 5 ? "Pausa Curta" : "Foco Total";
+        const pTime = document.getElementById("pomo-time");
+        if (pTime) pTime.innerText = `${m}:${s}`;
+        const pStatus = document.getElementById("pomo-status");
+        if (pStatus)
+          pStatus.innerText =
+            minutos === 5
+              ? "Pausa Curta"
+              : minutos === 120
+                ? "Revisão Semanal"
+                : "Foco Total";
       };
 
       window.togglePomodoro = () => {
         const p = document.getElementById("pomodoro-panel");
-        p.classList.toggle("hidden");
-        if (p.classList.contains("hidden") && isPomodoroActive)
-          document.getElementById("pomo-indicator").classList.remove("hidden");
-        else document.getElementById("pomo-indicator").classList.add("hidden");
+        if (p) p.classList.toggle("hidden");
+        const ind = document.getElementById("pomo-indicator");
+        if (ind && p) {
+          if (p.classList.contains("hidden") && isPomodoroActive)
+            ind.classList.remove("hidden");
+          else ind.classList.add("hidden");
+        }
       };
+
       window.startPomodoro = () => {
         isPomodoroActive = true;
-        document.getElementById("pomo-start").classList.add("hidden");
-        document.getElementById("pomo-pause").classList.remove("hidden");
-        document.getElementById("pomo-indicator").classList.remove("hidden");
+        const pStart = document.getElementById("pomo-start");
+        if (pStart) pStart.classList.add("hidden");
+        const pPause = document.getElementById("pomo-pause");
+        if (pPause) pPause.classList.remove("hidden");
+        const ind = document.getElementById("pomo-indicator");
+        if (ind) ind.classList.remove("hidden");
         pomoInterval = setInterval(() => {
           if (pomoTime > 0) {
             pomoTime--;
@@ -3267,7 +3506,8 @@
               .toString()
               .padStart(2, "0");
             const s = (pomoTime % 60).toString().padStart(2, "0");
-            document.getElementById("pomo-time").innerText = `${m}:${s}`;
+            const pTime = document.getElementById("pomo-time");
+            if (pTime) pTime.innerText = `${m}:${s}`;
           } else {
             window.resetPomodoro(true);
             tocarAlarme();
@@ -3276,12 +3516,16 @@
           }
         }, 1000);
       };
+
       window.pausePomodoro = () => {
         isPomodoroActive = false;
         clearInterval(pomoInterval);
-        document.getElementById("pomo-start").classList.remove("hidden");
-        document.getElementById("pomo-pause").classList.add("hidden");
-        document.getElementById("pomo-indicator").classList.add("hidden");
+        const pStart = document.getElementById("pomo-start");
+        if (pStart) pStart.classList.remove("hidden");
+        const pPause = document.getElementById("pomo-pause");
+        if (pPause) pPause.classList.add("hidden");
+        const ind = document.getElementById("pomo-indicator");
+        if (ind) ind.classList.add("hidden");
       };
 
       window.resetPomodoro = async (finished = false) => {
@@ -3289,8 +3533,8 @@
         const spent = pomoTotal - pomoTime;
         const minsSpent = Math.floor(spent / 60);
         if (minsSpent >= 1 && currentUser) {
-          const disc =
-            document.getElementById("pomo-disciplina").value || "geral";
+          const discEl = document.getElementById("pomo-disciplina");
+          const disc = discEl ? discEl.value || "geral" : "geral";
           await addDoc(
             collection(
               db,
@@ -3310,6 +3554,7 @@
 
       window.showToast = function (msg, type = "success") {
         const container = document.getElementById("toast-container");
+        if (!container) return;
         const toast = document.createElement("div");
         const colors =
           type === "success"
