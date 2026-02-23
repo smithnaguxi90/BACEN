@@ -269,10 +269,8 @@
     </style>
   </head>
   <body
-    class="flex h-screen overflow-hidden antialiased bg-slate-50 text-slate-800 dark:bg-darkBg dark:text-slate-200 pb-16 md:pb-0"
+    class="flex h-screen overflow-hidden antialiased bg-slate-50 text-slate-800 dark:bg-darkBg dark:text-slate-200 pb-16 md:pb-0 relative"
   >
-    <!-- pb-16 for mobile bottom bar -->
-
     <!-- Loading Overlay -->
     <div
       id="loading-overlay"
@@ -290,8 +288,80 @@
       class="fixed top-5 right-5 z-50 flex flex-col gap-3"
     ></div>
 
+    <!-- Botão Rápido "Tropecei" (FAB) -->
+    <button
+      onclick="toggleQuickErrorModal()"
+      class="fixed bottom-20 md:bottom-6 left-4 md:left-6 z-40 w-14 h-14 bg-red-600 hover:bg-red-700 text-white rounded-full shadow-lg shadow-red-500/40 flex items-center justify-center text-xl transition-transform hover:scale-110"
+      title="Anotar Tropeção Rápido"
+    >
+      <i class="fa-solid fa-bolt"></i>
+    </button>
+
+    <!-- Modal "Tropecei" Rápido -->
+    <div
+      id="quick-error-modal"
+      class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[70] hidden flex items-center justify-center p-4"
+    >
+      <div
+        class="bg-white dark:bg-darkCard p-6 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-800 w-full max-w-lg transform transition-all"
+      >
+        <div class="flex justify-between items-center mb-5">
+          <h3 class="text-xl font-black flex items-center gap-2">
+            <i class="fa-solid fa-bolt text-red-500"></i> Anotar Tropeção!
+          </h3>
+          <button
+            onclick="toggleQuickErrorModal()"
+            class="text-slate-400 hover:text-slate-600 dark:hover:text-white"
+          >
+            <i class="fa-solid fa-xmark text-lg"></i>
+          </button>
+        </div>
+        <form onsubmit="salvarErroRapido(event)">
+          <div class="grid grid-cols-1 gap-4 mb-4">
+            <select
+              id="qe-disciplina"
+              required
+              class="w-full border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-brand-500"
+            >
+              <option value="" disabled selected>Disciplina...</option>
+              <!-- Preenchido via JS -->
+            </select>
+            <input
+              type="text"
+              id="qe-topico"
+              placeholder="Tópico (ex: Crase, SQL...)"
+              required
+              class="w-full border border-slate-200 dark:border-slate-700 bg-transparent rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-brand-500"
+            />
+            <textarea
+              id="qe-pegadinha"
+              rows="2"
+              required
+              placeholder="A Pegadinha..."
+              class="w-full border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-900/10 rounded-xl p-3 text-sm outline-none text-red-900 dark:text-red-300 focus:ring-2 focus:ring-red-500"
+            ></textarea>
+            <textarea
+              id="qe-regra"
+              rows="2"
+              required
+              placeholder="A Regra Ouro (**negrito**)..."
+              class="w-full border border-emerald-200 dark:border-emerald-900/50 bg-emerald-50 dark:bg-emerald-900/10 rounded-xl p-3 text-sm outline-none text-emerald-900 dark:text-emerald-300 focus:ring-2 focus:ring-emerald-500"
+            ></textarea>
+          </div>
+          <div class="flex justify-end gap-3 pt-2">
+            <button
+              type="submit"
+              class="px-6 py-2.5 bg-red-600 text-white rounded-xl font-bold shadow-md hover:bg-red-700 transition-colors w-full"
+            >
+              Guardar no Caderno
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
     <!-- Pomodoro Widget -->
-    <div class="fixed bottom-20 md:bottom-6 right-6 z-40">
+    <div class="fixed bottom-20 md:bottom-6 right-4 md:right-6 z-40">
       <div
         id="pomodoro-panel"
         class="bg-white dark:bg-darkCard rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 p-4 w-64 mb-4 hidden transform transition-all origin-bottom-right"
@@ -310,7 +380,6 @@
           </button>
         </div>
 
-        <!-- Tempos Rápidos -->
         <div
           class="flex justify-center gap-1 mb-4 border-b border-slate-100 dark:border-slate-800 pb-3"
         >
@@ -373,7 +442,7 @@
       </div>
       <button
         onclick="togglePomodoro()"
-        class="w-14 h-14 bg-brand-600 hover:bg-brand-700 text-white rounded-full shadow-lg shadow-brand-500/40 flex items-center justify-center text-xl transition-transform hover:scale-110 ml-auto float-right relative"
+        class="w-14 h-14 bg-slate-800 hover:bg-slate-900 text-white rounded-full shadow-lg flex items-center justify-center text-xl transition-transform hover:scale-110 ml-auto float-right relative"
       >
         <i class="fa-solid fa-clock"></i>
         <span
@@ -388,7 +457,6 @@
       id="sidebar"
       class="w-64 bg-white dark:bg-darkCard border-r border-slate-200 dark:border-slate-800 flex-col hidden md:flex z-20 transition-all duration-300 relative"
     >
-      <!-- Modo Foco Toggle -->
       <button
         onclick="toggleModoFoco()"
         class="absolute -right-3 top-8 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-400 hover:text-brand-500 rounded-full w-6 h-6 flex items-center justify-center shadow-sm z-30 transition-transform"
@@ -477,15 +545,31 @@
           <i class="fa-solid fa-layer-group w-5 text-center"></i>
           <span class="font-medium nav-text whitespace-nowrap">Flashcards</span>
         </button>
+        <p
+          class="menu-title text-xs font-bold text-slate-400 dark:text-slate-500 px-4 mt-4 mb-2 uppercase tracking-wider whitespace-nowrap"
+        >
+          Provas & Treino
+        </p>
+        <button
+          onclick="navigate('baterias')"
+          id="nav-baterias"
+          class="nav-item rounded-lg px-4 py-3 flex items-center gap-3 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 border border-brand-100 dark:border-brand-900/30 bg-brand-50/50 dark:bg-brand-900/10"
+        >
+          <i
+            class="fa-solid fa-stopwatch-20 w-5 text-center text-brand-500"
+          ></i>
+          <span
+            class="font-bold text-brand-700 dark:text-brand-400 nav-text whitespace-nowrap"
+            >Baterias (Treino)</span
+          >
+        </button>
         <button
           onclick="navigate('simulados')"
           id="nav-simulados"
           class="nav-item rounded-lg px-4 py-3 flex items-center gap-3 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800"
         >
           <i class="fa-solid fa-crosshairs w-5 text-center"></i>
-          <span class="font-medium nav-text whitespace-nowrap"
-            >Provas & Simulados</span
-          >
+          <span class="font-medium nav-text whitespace-nowrap">Simulados</span>
         </button>
       </nav>
 
@@ -552,24 +636,24 @@
 
     <!-- Mobile Bottom Navigation Bar (Nativa) -->
     <nav
-      class="md:hidden fixed bottom-0 w-full bg-white dark:bg-darkCard border-t border-slate-200 dark:border-slate-800 flex justify-around items-center pt-2 pb-safe z-50 shadow-[0_-4px_15px_rgba(0,0,0,0.05)]"
+      class="md:hidden fixed bottom-0 w-full bg-white dark:bg-darkCard border-t border-slate-200 dark:border-slate-800 flex justify-around items-center pt-2 pb-safe z-50 shadow-[0_-4px_15px_rgba(0,0,0,0.05)] overflow-x-auto no-scrollbar"
     >
       <button
         onclick="navigate('dashboard')"
-        class="mob-nav-item active flex flex-col items-center p-2 text-slate-400 transition-colors"
+        class="mob-nav-item active flex flex-col items-center p-2 text-slate-400 transition-colors shrink-0 min-w-[4rem]"
         id="mob-dashboard"
       >
-        <i class="fa-solid fa-chart-pie text-xl mb-1"></i
+        <i class="fa-solid fa-chart-pie text-[1.1rem] mb-1"></i
         ><span class="text-[9px] font-bold uppercase tracking-wider"
           >Resumo</span
         >
       </button>
       <button
         onclick="navigate('revisoes')"
-        class="mob-nav-item flex flex-col items-center p-2 text-slate-400 transition-colors relative"
+        class="mob-nav-item flex flex-col items-center p-2 text-slate-400 transition-colors relative shrink-0 min-w-[4rem]"
         id="mob-revisoes"
       >
-        <i class="fa-solid fa-brain text-xl mb-1"></i
+        <i class="fa-solid fa-brain text-[1.1rem] mb-1"></i
         ><span class="text-[9px] font-bold uppercase tracking-wider"
           >Revisar</span
         ><span
@@ -579,30 +663,40 @@
       </button>
       <button
         onclick="navigate('edital')"
-        class="mob-nav-item flex flex-col items-center p-2 text-slate-400 transition-colors"
+        class="mob-nav-item flex flex-col items-center p-2 text-slate-400 transition-colors shrink-0 min-w-[4rem]"
         id="mob-edital"
       >
-        <i class="fa-solid fa-list-check text-xl mb-1"></i
+        <i class="fa-solid fa-list-check text-[1.1rem] mb-1"></i
         ><span class="text-[9px] font-bold uppercase tracking-wider"
           >Edital</span
         >
       </button>
       <button
         onclick="navigate('caderno')"
-        class="mob-nav-item flex flex-col items-center p-2 text-slate-400 transition-colors"
+        class="mob-nav-item flex flex-col items-center p-2 text-slate-400 transition-colors shrink-0 min-w-[4rem]"
         id="mob-caderno"
       >
-        <i class="fa-solid fa-book-skull text-xl mb-1"></i
+        <i class="fa-solid fa-book-skull text-[1.1rem] mb-1"></i
         ><span class="text-[9px] font-bold uppercase tracking-wider"
           >Erros</span
         >
       </button>
       <button
+        onclick="navigate('baterias')"
+        class="mob-nav-item flex flex-col items-center p-2 text-brand-500 dark:text-brand-400 transition-colors shrink-0 min-w-[4rem]"
+        id="mob-baterias"
+      >
+        <i class="fa-solid fa-stopwatch-20 text-[1.1rem] mb-1"></i
+        ><span class="text-[9px] font-bold uppercase tracking-wider"
+          >Treino</span
+        >
+      </button>
+      <button
         onclick="navigate('simulados')"
-        class="mob-nav-item flex flex-col items-center p-2 text-slate-400 transition-colors"
+        class="mob-nav-item flex flex-col items-center p-2 text-slate-400 transition-colors shrink-0 min-w-[4rem]"
         id="mob-simulados"
       >
-        <i class="fa-solid fa-crosshairs text-xl mb-1"></i
+        <i class="fa-solid fa-crosshairs text-[1.1rem] mb-1"></i
         ><span class="text-[9px] font-bold uppercase tracking-wider"
           >Provas</span
         >
@@ -653,7 +747,32 @@
         </div>
 
         <!-- Top Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <!-- Meta Diária Card -->
+          <div
+            class="bg-gradient-to-br from-brand-600 to-indigo-700 p-6 rounded-2xl shadow-soft text-white flex flex-col justify-between relative overflow-hidden"
+          >
+            <div class="relative z-10">
+              <p class="text-sm font-medium text-brand-100 mb-1">
+                Meta Diária (Questões)
+              </p>
+              <div class="flex items-end gap-2">
+                <p class="text-3xl font-extrabold" id="stat-meta-hoje">0</p>
+                <p class="text-sm text-brand-200 font-medium mb-1">/ 100</p>
+              </div>
+            </div>
+            <div class="w-full bg-black/20 rounded-full h-2 mt-4 relative z-10">
+              <div
+                class="bg-white h-2 rounded-full transition-all duration-1000"
+                id="bar-meta-hoje"
+                style="width: 0%"
+              ></div>
+            </div>
+            <i
+              class="fa-solid fa-bullseye absolute -right-2 -bottom-4 text-6xl text-white/10"
+            ></i>
+          </div>
+
           <div
             class="bg-white dark:bg-darkCard p-6 rounded-2xl shadow-soft border border-slate-100 dark:border-slate-800 flex items-center justify-between"
           >
@@ -661,7 +780,7 @@
               <p
                 class="text-sm font-medium text-slate-400 dark:text-slate-500 mb-1"
               >
-                Tópicos do Edital
+                Tópicos Vistos
               </p>
               <p
                 class="text-3xl font-extrabold text-slate-800 dark:text-white"
@@ -723,6 +842,7 @@
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <!-- Progresso Macro -->
           <div
             class="bg-white dark:bg-darkCard p-6 rounded-2xl shadow-soft border border-slate-100 dark:border-slate-800 lg:col-span-2"
           >
@@ -753,6 +873,139 @@
                 <p class="text-sm text-slate-400 font-medium">Caderno Vazio</p>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= BATERIAS (TREINO DE QUESTÕES) ================= -->
+      <section id="view-baterias" class="view-section w-full max-w-7xl mx-auto">
+        <header
+          class="mb-8 flex flex-col md:flex-row justify-between items-end gap-4"
+        >
+          <div>
+            <h2 class="text-2xl md:text-3xl font-extrabold tracking-tight">
+              Treino de Questões
+            </h2>
+            <p class="text-slate-500 dark:text-slate-400 mt-1">
+              Otimize a sua taxa de acerto e o tempo médio por questão (Pacing).
+            </p>
+          </div>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+          <!-- Painel Pacing / StopWatch -->
+          <div
+            class="bg-slate-900 text-white p-6 rounded-2xl shadow-soft border border-slate-800 flex flex-col items-center justify-center relative overflow-hidden"
+          >
+            <p
+              class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-2 z-10"
+            >
+              Cronómetro da Bateria
+            </p>
+            <div
+              id="pacing-time"
+              class="text-6xl font-black font-mono tracking-tighter mb-6 z-10 text-brand-400"
+            >
+              00:00
+            </div>
+            <div class="flex gap-3 z-10">
+              <button
+                onclick="startPacing()"
+                id="btn-pacing-start"
+                class="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-3 rounded-xl font-bold shadow-lg transition-transform hover:scale-105"
+              >
+                <i class="fa-solid fa-play mr-2"></i> Iniciar
+              </button>
+              <button
+                onclick="stopPacing()"
+                id="btn-pacing-stop"
+                class="bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-xl font-bold shadow-lg transition-transform hover:scale-105 hidden"
+              >
+                <i class="fa-solid fa-stop mr-2"></i> Parar
+              </button>
+            </div>
+            <i
+              class="fa-solid fa-stopwatch-20 absolute -right-6 -bottom-6 text-9xl text-white/5 pointer-events-none"
+            ></i>
+          </div>
+
+          <!-- Formulário Manual -->
+          <div
+            class="lg:col-span-2 bg-white dark:bg-darkCard p-6 rounded-2xl shadow-soft border border-slate-100 dark:border-slate-800"
+          >
+            <h3 class="font-bold mb-4 flex items-center gap-2">
+              <i class="fa-solid fa-pen-to-square text-brand-500"></i> Registar
+              Bateria Concluída
+            </h3>
+            <form id="bateria-form" onsubmit="salvarBateria(event)">
+              <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                <div class="col-span-2 md:col-span-1">
+                  <label class="block text-xs font-bold text-slate-500 mb-1"
+                    >Disciplina</label
+                  >
+                  <select
+                    id="bat-disciplina"
+                    required
+                    class="w-full border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 rounded-xl p-3 outline-none text-sm focus:ring-2 focus:ring-brand-500"
+                  >
+                    <option value="" disabled selected>Selecionar...</option>
+                    <!-- Preenchido via JS -->
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-slate-500 mb-1"
+                    >Resolvidas</label
+                  ><input
+                    type="number"
+                    min="1"
+                    id="bat-total"
+                    required
+                    class="w-full border border-slate-200 dark:border-slate-700 bg-transparent rounded-xl p-3 outline-none text-sm font-bold focus:ring-2 focus:ring-brand-500"
+                  />
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-emerald-600 mb-1"
+                    >Acertos</label
+                  ><input
+                    type="number"
+                    min="0"
+                    id="bat-certas"
+                    required
+                    class="w-full border border-emerald-200 dark:border-emerald-900/50 bg-emerald-50 dark:bg-emerald-900/10 rounded-xl p-3 outline-none text-sm font-bold text-emerald-700 dark:text-emerald-400 focus:ring-2 focus:ring-emerald-500"
+                  />
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-slate-400 mb-1"
+                    >Tempo (min)</label
+                  ><input
+                    type="number"
+                    step="0.1"
+                    min="0"
+                    id="bat-tempo"
+                    placeholder="Opcional"
+                    class="w-full border border-slate-200 dark:border-slate-700 bg-transparent rounded-xl p-3 outline-none text-sm focus:ring-2 focus:ring-slate-400"
+                  />
+                </div>
+              </div>
+              <div class="flex justify-end">
+                <button
+                  type="submit"
+                  class="px-6 py-2.5 bg-brand-600 text-white rounded-xl font-bold shadow-md hover:bg-brand-700 transition-colors"
+                >
+                  Gravar Bateria
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Gráfico Taxa de Acertos -->
+        <div
+          class="bg-white dark:bg-darkCard p-6 rounded-2xl shadow-soft border border-slate-100 dark:border-slate-800 mb-8 min-h-[350px] flex flex-col"
+        >
+          <h3 class="font-bold mb-4">Taxa de Acerto por Disciplina (%)</h3>
+          <div class="flex-1 relative w-full">
+            <canvas id="acertosChart"></canvas>
           </div>
         </div>
       </section>
@@ -875,11 +1128,7 @@
                 <option value="" disabled selected>
                   Escolha a Disciplina...
                 </option>
-                <option value="portugues">Língua Portuguesa</option>
-                <option value="bd">Bancos de Dados</option>
-                <option value="engsoft">Engenharia de Software</option>
-                <option value="gestao">Gestão em TI</option>
-                <option value="admin">Direito Administrativo</option>
+                <!-- Preenchido dinamicamente via JS -->
               </select>
               <input
                 type="text"
@@ -919,7 +1168,7 @@
                 type="submit"
                 class="px-6 py-2.5 bg-brand-600 text-white rounded-xl hover:bg-brand-700 text-sm font-bold shadow-md transition-colors"
               >
-                Salvar no Cofre
+                Salvar no Caderno
               </button>
             </div>
           </form>
@@ -1240,6 +1489,8 @@
 
       const appId = "bacen-hub-local";
       const useLocal = false; // Mantemos 'false' para garantir conexão ao Firebase
+      const META_DIARIA = 100; // Meta de 100 questões por dia
+      let metaAtingidaHoje = false;
 
       let app,
         auth,
@@ -1248,7 +1499,8 @@
       let unsubscribeErros,
         unsubscribeSimulados,
         unsubscribeEdital,
-        unsubscribeStreak;
+        unsubscribeStreak,
+        unsubscribeBaterias;
 
       // ORDEM DE EXIBIÇÃO DAS MATÉRIAS
       const ORDEM_MATERIAS = ["portugues", "bd", "engsoft", "gestao", "admin"];
@@ -1549,20 +1801,31 @@
         return state;
       }
 
-      // Popular filtro do Caderno dinamicamente
-      const selectFiltro = document.getElementById("filtro-disciplina");
-      ORDEM_MATERIAS.forEach((key) => {
-        const opt = document.createElement("option");
-        opt.value = key;
-        opt.text = EDITAL_TEMPLATE[key].nome;
-        selectFiltro.appendChild(opt);
+      // Popular selects dinamicamente
+      const selectsToFill = [
+        "filtro-disciplina",
+        "input-disciplina",
+        "qe-disciplina",
+        "bat-disciplina",
+      ];
+      selectsToFill.forEach((selectId) => {
+        const el = document.getElementById(selectId);
+        if (el) {
+          ORDEM_MATERIAS.forEach((key) => {
+            const opt = document.createElement("option");
+            opt.value = key;
+            opt.text = EDITAL_TEMPLATE[key].nome;
+            el.appendChild(opt);
+          });
+        }
       });
 
       window.editalState = {};
       window.cadernoDeErros = [];
       window.simulados = [];
+      window.baterias = [];
       window.streakState = { count: 0, lastDate: null };
-      let charts = { erros: null, simulados: null };
+      let charts = { erros: null, simulados: null, acertos: null };
       let fcIndex = 0;
 
       window.toggleTheme = function () {
@@ -1689,6 +1952,17 @@
               .map((d) => ({ firebaseId: d.id, ...d.data() }))
               .sort((a, b) => new Date(a.data) - new Date(b.data));
             renderSimulados();
+          },
+        );
+
+        unsubscribeBaterias = onSnapshot(
+          collection(db, "artifacts", appId, "users", uid, "baterias"),
+          (snap) => {
+            window.baterias = snap.docs
+              .map((d) => ({ firebaseId: d.id, ...d.data() }))
+              .sort((a, b) => b.createdAt - a.createdAt);
+            updateDashboard();
+            renderBaterias();
           },
         );
       }
@@ -1957,6 +2231,28 @@
         document.getElementById("stat-taxa").innerText =
           `${tTotal > 0 ? Math.round((tConc / tTotal) * 100) : 0}%`;
 
+        // Lógica da Meta Diária
+        const todayStr = getTodayStr();
+        const questoesHoje = window.baterias
+          .filter((b) => {
+            const d = new Date(b.createdAt);
+            d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+            return d.toISOString().split("T")[0] === todayStr;
+          })
+          .reduce((acc, curr) => acc + curr.resolvidas, 0);
+
+        document.getElementById("stat-meta-hoje").innerText = questoesHoje;
+        let percMeta = Math.round((questoesHoje / META_DIARIA) * 100);
+        if (percMeta > 100) percMeta = 100;
+        document.getElementById("bar-meta-hoje").style.width = `${percMeta}%`;
+
+        if (percMeta === 100 && !metaAtingidaHoje) {
+          metaAtingidaHoje = true;
+          triggerGamification();
+          showToast("Meta Diária Atingida! Impressionante! 🎯", "success");
+        }
+
+        // Gráfico Erros
         const ctx = document.getElementById("errosChart").getContext("2d");
         let errorCount = {};
         for (const key of Object.keys(window.editalState)) errorCount[key] = 0;
@@ -2014,8 +2310,13 @@
           document.getElementById("view-simulados").classList.contains("active")
         )
           renderSimulados();
+        if (
+          document.getElementById("view-baterias").classList.contains("active")
+        )
+          renderBaterias();
       }
 
+      // --- SISTEMA DE CADERNO DE ERROS ---
       window.salvarErro = async function (e) {
         e.preventDefault();
         if (!currentUser) return;
@@ -2037,6 +2338,33 @@
         window.toggleFormErro();
         showToast("Tropeção registado!");
         window.triggerActivity();
+      };
+
+      window.salvarErroRapido = async function (e) {
+        e.preventDefault();
+        if (!currentUser) return;
+        const materiaId = document.getElementById("qe-disciplina").value;
+        await addDoc(
+          collection(db, "artifacts", appId, "users", currentUser.uid, "erros"),
+          {
+            disciplina: materiaId,
+            nomeDisciplina:
+              window.editalState[materiaId]?.nome || "Materia Desconhecida",
+            topico: document.getElementById("qe-topico").value,
+            pegadinha: document.getElementById("qe-pegadinha").value,
+            regra: document.getElementById("qe-regra").value,
+            qtd: 1,
+            createdAt: Date.now(),
+          },
+        );
+        e.target.reset();
+        window.toggleQuickErrorModal();
+        showToast("Adicionado ao Caderno!", "success");
+        window.triggerActivity();
+      };
+
+      window.toggleQuickErrorModal = () => {
+        document.getElementById("quick-error-modal").classList.toggle("hidden");
       };
 
       window.incrementarErro = async function (id, qtd) {
@@ -2069,7 +2397,6 @@
         const tbody = document.getElementById("tabela-body");
         tbody.innerHTML = "";
         const filtro = document.getElementById("filtro-disciplina").value;
-
         let errosFiltrados = window.cadernoDeErros;
         if (filtro !== "todas")
           errosFiltrados = errosFiltrados.filter(
@@ -2090,6 +2417,170 @@
         });
       };
 
+      // --- SISTEMA DE BATERIAS DE QUESTÕES ---
+      let pacingInterval;
+      let pacingSeconds = 0;
+      let isPacingActive = false;
+
+      window.startPacing = () => {
+        if (isPacingActive) return;
+        isPacingActive = true;
+        pacingSeconds = 0;
+        document.getElementById("pacing-time").innerText = "00:00";
+        document.getElementById("btn-pacing-start").classList.add("hidden");
+        document.getElementById("btn-pacing-stop").classList.remove("hidden");
+        pacingInterval = setInterval(() => {
+          pacingSeconds++;
+          const m = Math.floor(pacingSeconds / 60)
+            .toString()
+            .padStart(2, "0");
+          const s = (pacingSeconds % 60).toString().padStart(2, "0");
+          document.getElementById("pacing-time").innerText = `${m}:${s}`;
+        }, 1000);
+      };
+
+      window.stopPacing = () => {
+        isPacingActive = false;
+        clearInterval(pacingInterval);
+        document.getElementById("btn-pacing-start").classList.remove("hidden");
+        document.getElementById("btn-pacing-stop").classList.add("hidden");
+        const min = parseFloat((pacingSeconds / 60).toFixed(1));
+        document.getElementById("bat-tempo").value = min > 0 ? min : "";
+        window.showToast(
+          `Bateria finalizada! Preencha os dados abaixo.`,
+          "success",
+        );
+      };
+
+      window.salvarBateria = async function (e) {
+        e.preventDefault();
+        if (!currentUser) return;
+        const disciplinaId = document.getElementById("bat-disciplina").value;
+        const resolvidas =
+          parseInt(document.getElementById("bat-total").value) || 0;
+        const certas =
+          parseInt(document.getElementById("bat-certas").value) || 0;
+        const tempoStr = document.getElementById("bat-tempo").value;
+        const tempo = tempoStr ? parseFloat(tempoStr) : 0;
+
+        if (certas > resolvidas)
+          return window.showToast(
+            "Acertos não podem ser maiores que resolvidas!",
+            "error",
+          );
+
+        await addDoc(
+          collection(
+            db,
+            "artifacts",
+            appId,
+            "users",
+            currentUser.uid,
+            "baterias",
+          ),
+          {
+            disciplina: disciplinaId,
+            nomeDisciplina:
+              window.editalState[disciplinaId]?.nome || "Desconhecida",
+            resolvidas,
+            certas,
+            tempo,
+            createdAt: Date.now(),
+          },
+        );
+
+        document.getElementById("bateria-form").reset();
+        pacingSeconds = 0;
+        document.getElementById("pacing-time").innerText = "00:00";
+        let msg = `Bateria registada!`;
+        if (tempo > 0 && resolvidas > 0) {
+          const segPorQ = Math.round((tempo * 60) / resolvidas);
+          msg = `Registo salvo! Média: ${segPorQ}s por questão.`;
+        }
+        window.showToast(msg);
+        window.triggerActivity();
+      };
+
+      function renderBaterias() {
+        if (!document.getElementById("acertosChart")) return;
+        const ctx = document.getElementById("acertosChart").getContext("2d");
+
+        let stats = {};
+        ORDEM_MATERIAS.forEach((key) => {
+          stats[key] = {
+            resolvidas: 0,
+            certas: 0,
+            nome: EDITAL_TEMPLATE[key].nome,
+            cor: EDITAL_TEMPLATE[key].cor,
+          };
+        });
+
+        window.baterias.forEach((b) => {
+          if (stats[b.disciplina]) {
+            stats[b.disciplina].resolvidas += b.resolvidas;
+            stats[b.disciplina].certas += b.certas;
+          }
+        });
+
+        let labels = [],
+          data = [],
+          colors = [];
+        ORDEM_MATERIAS.forEach((key) => {
+          if (stats[key].resolvidas > 0) {
+            labels.push(stats[key].nome);
+            colors.push(stats[key].cor);
+            data.push(
+              Math.round((stats[key].certas / stats[key].resolvidas) * 100),
+            );
+          }
+        });
+
+        const isDark = document.documentElement.classList.contains("dark");
+        if (charts.acertos) charts.acertos.destroy();
+        charts.acertos = new Chart(ctx, {
+          type: "bar",
+          data: {
+            labels,
+            datasets: [
+              {
+                label: "Taxa de Acerto (%)",
+                data,
+                backgroundColor: colors,
+                borderRadius: 8,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: {
+                grid: { display: false },
+                ticks: {
+                  color: isDark ? "#cbd5e1" : "#475569",
+                  font: { family: "'Plus Jakarta Sans'" },
+                },
+              },
+              y: {
+                beginAtZero: true,
+                max: 100,
+                grid: {
+                  color: isDark ? "#334155" : "#e2e8f0",
+                  drawBorder: false,
+                },
+                ticks: {
+                  color: isDark ? "#cbd5e1" : "#475569",
+                  font: { family: "'Plus Jakarta Sans'" },
+                  stepSize: 20,
+                },
+              },
+            },
+            plugins: { legend: { display: false } },
+          },
+        });
+      }
+
+      // --- SIMULADOS ---
       window.salvarSimulado = async function (e) {
         e.preventDefault();
         if (!currentUser) return;
@@ -2142,7 +2633,6 @@
       function renderSimulados() {
         const lista = document.getElementById("simulados-lista");
         lista.innerHTML = "";
-
         let maxNota = -999;
         let soma = 0;
         window.simulados.forEach((s) => {
@@ -2153,12 +2643,10 @@
             lista.innerHTML;
         });
 
-        // Stats
-        const media =
+        document.getElementById("sim-media").innerText =
           window.simulados.length > 0
             ? (soma / window.simulados.length).toFixed(1)
             : 0;
-        document.getElementById("sim-media").innerText = media;
         document.getElementById("sim-recorde").innerText =
           maxNota === -999 ? 0 : maxNota;
 
@@ -2230,6 +2718,7 @@
         });
       }
 
+      // --- FLASHCARDS ---
       window.initFlashcards = function () {
         if (window.cadernoDeErros.length === 0) {
           document
@@ -2286,6 +2775,7 @@
         }
       };
 
+      // --- NAVEGAÇÃO ---
       window.navigate = function (viewId) {
         document
           .querySelectorAll(".view-section")
@@ -2309,6 +2799,7 @@
         if (viewId === "simulados") renderSimulados();
         if (viewId === "flashcards") window.initFlashcards();
         if (viewId === "revisoes") renderRevisoesPainel();
+        if (viewId === "baterias") renderBaterias();
       };
 
       window.toggleFormErro = () =>
