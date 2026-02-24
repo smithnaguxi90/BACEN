@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="pt-PT" class="light">
+<html lang="pt-BR" class="light">
   <head>
     <meta charset="UTF-8" />
     <meta
@@ -302,7 +302,7 @@
       <i
         class="fa-solid fa-circle-notch fa-spin text-4xl mb-4 text-brand-400"
       ></i>
-      <p class="font-semibold tracking-wider">A carregar QG...</p>
+      <p class="font-semibold tracking-wider">Carregando QG...</p>
     </div>
 
     <!-- Hardcore Mode Overlay -->
@@ -332,7 +332,7 @@
         onclick="toggleHardcoreMode()"
         class="px-8 py-3 bg-slate-800 hover:bg-slate-700 rounded-full font-bold transition-colors text-slate-300 hover:text-white border border-slate-700"
       >
-        Desistir / Terminar Simulado
+        Desistir / Encerrar Simulado
       </button>
     </div>
 
@@ -342,16 +342,16 @@
       class="fixed top-5 right-5 z-50 flex flex-col gap-3"
     ></div>
 
-    <!-- Botão Rápido "Tropecei" (FAB) -->
+    <!-- Botão Rápido "Tropeço" (FAB) -->
     <button
       onclick="toggleQuickErrorModal()"
       class="fixed bottom-20 md:bottom-6 left-4 md:left-6 z-40 w-14 h-14 bg-red-600 hover:bg-red-700 text-white rounded-full shadow-lg shadow-red-500/40 flex items-center justify-center text-xl transition-transform hover:scale-110"
-      title="Anotar Tropeção Rápido"
+      title="Anotar Erro Rápido"
     >
       <i class="fa-solid fa-bolt"></i>
     </button>
 
-    <!-- Modal "Tropecei" Rápido -->
+    <!-- Modal "Tropeço" Rápido -->
     <div
       id="quick-error-modal"
       class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[70] hidden flex items-center justify-center p-4"
@@ -361,7 +361,7 @@
       >
         <div class="flex justify-between items-center mb-5">
           <h3 class="text-xl font-black flex items-center gap-2">
-            <i class="fa-solid fa-bolt text-red-500"></i> Anotar Tropeção!
+            <i class="fa-solid fa-bolt text-red-500"></i> Anotar Tropeço!
           </h3>
           <button
             onclick="toggleQuickErrorModal()"
@@ -398,7 +398,7 @@
               id="qe-regra"
               rows="2"
               required
-              placeholder="A Regra Ouro (**negrito**)..."
+              placeholder="A Regra de Ouro (**negrito**)..."
               class="w-full border border-emerald-200 dark:border-emerald-900/50 bg-emerald-50 dark:bg-emerald-900/10 rounded-xl p-3 text-sm outline-none text-emerald-900 dark:text-emerald-300 focus:ring-2 focus:ring-emerald-500"
             ></textarea>
           </div>
@@ -407,7 +407,7 @@
               type="submit"
               class="px-6 py-2.5 bg-red-600 text-white rounded-xl font-bold shadow-md hover:bg-red-700 transition-colors w-full"
             >
-              Guardar no Caderno
+              Salvar no Caderno
             </button>
           </div>
         </form>
@@ -1033,7 +1033,7 @@
                   class="fa-solid fa-stopwatch text-4xl text-slate-300 dark:text-slate-600 mb-2"
                 ></i>
                 <p class="text-sm text-slate-400 font-medium">
-                  Use o Pomodoro para registar
+                  Use o Pomodoro para registrar
                 </p>
               </div>
             </div>
@@ -1098,7 +1098,7 @@
             onclick="gerarRevisaoExtra()"
             class="bg-brand-100 hover:bg-brand-200 text-brand-700 dark:bg-brand-900/30 dark:hover:bg-brand-900/50 dark:text-brand-400 px-6 py-2.5 rounded-xl font-bold transition-colors shadow-sm"
           >
-            <i class="fa-solid fa-shuffle mr-2"></i> Puxar Revisão Aleatória
+            <i class="fa-solid fa-shuffle mr-2"></i> Gerar Revisão Aleatória
           </button>
         </div>
 
@@ -1120,7 +1120,7 @@
               Treino de Questões
             </h2>
             <p class="text-slate-500 dark:text-slate-400 mt-1">
-              Otimize a sua taxa de acerto e o tempo médio por questão (Pacing).
+              Otimize sua taxa de acerto e o tempo médio por questão (Pacing).
             </p>
           </div>
         </header>
@@ -1133,7 +1133,7 @@
             <p
               class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-2 z-10"
             >
-              Cronómetro da Bateria
+              Cronômetro da Bateria
             </p>
             <div
               id="pacing-time"
@@ -1167,7 +1167,7 @@
             class="lg:col-span-2 bg-white dark:bg-darkCard p-6 rounded-2xl shadow-soft border border-slate-100 dark:border-slate-800"
           >
             <h3 class="font-bold mb-4 flex items-center gap-2">
-              <i class="fa-solid fa-pen-to-square text-brand-500"></i> Registar
+              <i class="fa-solid fa-pen-to-square text-brand-500"></i> Registrar
               Bateria Concluída
             </h3>
             <form id="bateria-form" onsubmit="salvarBateria(event)">
@@ -1255,7 +1255,7 @@
               Edital Verticalizado
             </h2>
             <p class="text-slate-500 dark:text-slate-400 mt-1">
-              Registe o avanço. O sistema agenda as revisões automaticamente.
+              Registre o avanço. O sistema agenda as revisões automaticamente.
             </p>
           </div>
           <div class="flex gap-2">
@@ -1289,7 +1289,7 @@
               Caderno de Erros
             </h2>
             <p class="text-slate-500 dark:text-slate-400 mt-1 no-print">
-              Registe as armadilhas para não cair novamente na prova.
+              Registre as armadilhas para não cair novamente na prova.
             </p>
           </div>
           <div class="flex flex-wrap gap-3 no-print">
@@ -1395,7 +1395,7 @@
                   <th
                     class="px-5 py-4 font-bold text-xs text-slate-400 uppercase w-1/3"
                   >
-                    A Regra Ouro
+                    A Regra de Ouro
                   </th>
                   <th
                     class="px-5 py-4 font-bold text-xs text-slate-400 uppercase text-center no-print w-32"
@@ -1427,8 +1427,8 @@
             >
           </h2>
           <p class="text-slate-500 mt-1">
-            O sistema esconde os que já sabe e mostra apenas os que precisa
-            rever hoje.
+            O sistema esconde o que você já sabe e mostra apenas o que precisa
+            revisar hoje.
           </p>
         </header>
 
@@ -1438,7 +1438,7 @@
           ></i>
           <p class="text-slate-500 font-bold text-lg mb-1">Tudo Revisto!</p>
           <p class="text-slate-400 text-sm">
-            Não há cartões pendentes de revisão. O seu cérebro agradece.
+            Não há cartões pendentes de revisão. Seu cérebro agradece.
           </p>
         </div>
 
@@ -1756,9 +1756,8 @@
         unsubscribePomo;
 
       // ESTRUTURA LOCAL SEGURA
-      const ORDEM_MATERIAS = ["portugues", "bd", "engsoft", "gestao", "admin"];
-
-      const EDITAL_TEMPLATE = {
+      window.ORDEM_MATERIAS = ["portugues", "bd", "engsoft", "gestao", "admin"];
+      window.EDITAL_TEMPLATE = {
         portugues: {
           nome: "Língua Portuguesa",
           cor: "#10b981",
@@ -2047,11 +2046,13 @@
 
       function syncEdital(savedState) {
         let state = JSON.parse(JSON.stringify(savedState));
-        for (const mat in EDITAL_TEMPLATE) {
+        for (const mat in window.EDITAL_TEMPLATE) {
           if (!state[mat]) {
-            state[mat] = JSON.parse(JSON.stringify(EDITAL_TEMPLATE[mat]));
+            state[mat] = JSON.parse(
+              JSON.stringify(window.EDITAL_TEMPLATE[mat]),
+            );
           } else {
-            EDITAL_TEMPLATE[mat].topicos.forEach((tplTopic) => {
+            window.EDITAL_TEMPLATE[mat].topicos.forEach((tplTopic) => {
               let existing = state[mat].topicos.find(
                 (t) => t.id === tplTopic.id,
               );
@@ -2060,7 +2061,9 @@
                 state[mat].topicos.push(JSON.parse(JSON.stringify(tplTopic)));
             });
             state[mat].topicos = state[mat].topicos.filter((t) =>
-              EDITAL_TEMPLATE[mat].topicos.some((tpl) => tpl.id === t.id),
+              window.EDITAL_TEMPLATE[mat].topicos.some(
+                (tpl) => tpl.id === t.id,
+              ),
             );
           }
         }
@@ -2091,10 +2094,10 @@
           const el = document.getElementById(s.id);
           if (el) {
             el.innerHTML = `<option value="${s.defVal}" ${s.defVal === "" ? "disabled" : ""} selected>${s.defText}</option>`;
-            ORDEM_MATERIAS.forEach((key) => {
+            window.ORDEM_MATERIAS.forEach((key) => {
               const opt = document.createElement("option");
               opt.value = key;
-              opt.text = EDITAL_TEMPLATE[key].nome;
+              opt.text = window.EDITAL_TEMPLATE[key].nome;
               el.appendChild(opt);
             });
           }
@@ -2172,7 +2175,7 @@
             currentUser = null;
           }
         });
-        navigate("dashboard");
+        window.navigate("dashboard");
       };
 
       function setupListeners() {
@@ -2193,7 +2196,9 @@
                   window.editalState,
                 );
             } else {
-              window.editalState = JSON.parse(JSON.stringify(EDITAL_TEMPLATE));
+              window.editalState = JSON.parse(
+                JSON.stringify(window.EDITAL_TEMPLATE),
+              );
               setDoc(
                 doc(db, "artifacts", appId, "users", uid, "config", "edital"),
                 window.editalState,
@@ -2204,7 +2209,10 @@
             renderRevisoesPainel();
             hideLoading();
           },
-          (error) => console.error(error),
+          (error) => {
+            console.error("Erro Edital:", error);
+            hideLoading();
+          },
         );
 
         unsubscribeStreak = onSnapshot(
@@ -2220,7 +2228,7 @@
             }
             checkAndUpdateStreakOnLoad();
           },
-          (error) => console.error(error),
+          (error) => console.error("Erro Streak:", error),
         );
 
         onSnapshot(
@@ -2230,7 +2238,7 @@
             else window.heatmapState = {};
             renderHeatmap();
           },
-          (error) => console.error(error),
+          (error) => console.error("Erro Heatmap:", error),
         );
 
         unsubscribeErros = onSnapshot(
@@ -2240,11 +2248,14 @@
               .map((d) => ({ firebaseId: d.id, ...d.data() }))
               .sort((a, b) => b.createdAt - a.createdAt);
             updateDashboard();
-            renderTabelaErros();
+            window.renderTabelaErros();
             if (typeof window.initFlashcards === "function")
               window.initFlashcards();
           },
-          (error) => console.error(error),
+          (error) => {
+            console.error("Erro Caderno:", error);
+            window.cadernoDeErros = [];
+          },
         );
 
         unsubscribeSimulados = onSnapshot(
@@ -2255,7 +2266,10 @@
               .sort((a, b) => new Date(a.data) - new Date(b.data));
             renderSimulados();
           },
-          (error) => console.error(error),
+          (error) => {
+            console.error("Erro Simulados:", error);
+            window.simulados = [];
+          },
         );
 
         unsubscribeBaterias = onSnapshot(
@@ -2267,7 +2281,10 @@
             updateDashboard();
             renderBaterias();
           },
-          (error) => console.error(error),
+          (error) => {
+            console.error("Erro Baterias:", error);
+            window.baterias = [];
+          },
         );
 
         unsubscribePomo = onSnapshot(
@@ -2276,7 +2293,10 @@
             window.pomodoros = snap.docs.map((d) => d.data());
             updateDashboard();
           },
-          (error) => console.error(error),
+          (error) => {
+            console.error("Erro Pomodoros:", error);
+            window.pomodoros = [];
+          },
         );
       }
 
@@ -2342,11 +2362,12 @@
           else currentCount = 1;
           window.streakState = { count: currentCount, lastDate: today };
           salvarEstadoNuvem("streak", window.streakState);
-          showToast(`Ofensiva garantida! ${currentCount} dia(s) 🔥`);
+          window.showToast(`Ofensiva garantida! ${currentCount} dia(s) 🔥`);
           if ([7, 14, 30].includes(currentCount) || currentCount % 30 === 0) {
             triggerGamification();
             setTimeout(
-              () => showToast(`Marco Histórico: ${currentCount} dias! 🏆`),
+              () =>
+                window.showToast(`Marco Histórico: ${currentCount} dias! 🏆`),
               1000,
             );
           }
@@ -2407,8 +2428,9 @@
       window.toggleTopico = async function (materiaId, topicoId, checkbox) {
         let newState = JSON.parse(JSON.stringify(window.editalState));
         const materia = newState[materiaId];
-        const topico = materia.topicos.find((t) => t.id === topicoId);
-        const prevConc = materia.topicos.filter((t) => t.concluido).length;
+        const topico = materia?.topicos?.find((t) => t.id === topicoId);
+        const prevConc =
+          materia?.topicos?.filter((t) => t.concluido).length || 0;
 
         if (topico) {
           topico.concluido = checkbox.checked;
@@ -2424,14 +2446,14 @@
             prevConc < materia.topicos.length
           ) {
             triggerGamification();
-            showToast(`Parabéns! Finalizou ${materia.nome}! 🏅`);
+            window.showToast(`Parabéns! Finalizou ${materia.nome}! 🏅`);
           }
         }
       };
 
       window.marcarRevisao = async function (materiaId, topicoId, tipo) {
         let newState = JSON.parse(JSON.stringify(window.editalState));
-        const topico = newState[materiaId].topicos.find(
+        const topico = newState[materiaId]?.topicos?.find(
           (t) => t.id === topicoId,
         );
         if (topico) {
@@ -2440,20 +2462,19 @@
           window.editalState = newState;
           await salvarEstadoNuvem("edital", window.editalState);
           if (topico.rev7 || topico.rev30) {
-            showToast(`Revisão registada! 🧠`);
+            window.showToast(`Revisão registrada! 🧠`);
             window.triggerActivity();
           }
         }
       };
 
-      // --- SISTEMA DE REVISÃO EXTRA (DIA DE REVISÃO) ---
       window.gerarRevisaoExtra = function () {
         const container = document.getElementById("revisoes-lista-container");
         const emptyState = document.getElementById("revisoes-vazio");
         if (!container || !emptyState) return;
         let concluidos = [];
 
-        ORDEM_MATERIAS.forEach((mId) => {
+        window.ORDEM_MATERIAS.forEach((mId) => {
           const materia = window.editalState[mId];
           if (!materia || !materia.topicos) return;
           materia.topicos.forEach((t) => {
@@ -2472,7 +2493,7 @@
         container.innerHTML = "";
         selecionados.forEach((item) => {
           const { mId, materia, t } = item;
-          container.innerHTML += `<div class="bg-white dark:bg-darkCard p-4 rounded-xl shadow-sm border border-brand-200 dark:border-brand-800 flex flex-col justify-between h-full relative overflow-hidden"><div class="absolute -right-4 -top-4 w-12 h-12 bg-brand-100 dark:bg-brand-900/30 rounded-full flex items-end justify-start p-2"><i class="fa-solid fa-star text-brand-500 text-[10px]"></i></div><div><div class="flex items-center gap-2 mb-2"><span class="w-3 h-3 rounded-full" style="background-color: ${materia.cor}"></span><span class="text-xs font-bold uppercase tracking-wider text-slate-500">${materia.nome}</span></div><h4 class="font-bold text-slate-800 dark:text-slate-200 mb-4 leading-tight pr-6">${t.nome}</h4></div><div class="flex justify-between items-center mt-auto border-t border-slate-100 dark:border-slate-800 pt-3"><span class="text-xs font-bold px-2 py-1 rounded-md border text-brand-600 bg-brand-50 border-brand-200 dark:text-brand-400 dark:bg-brand-900/30 dark:border-brand-800">Extra</span><button onclick="renderRevisoesPainel(); window.showToast('Revisão extra concluída! 🌟')" class="bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 px-3 py-1.5 rounded-lg transition-colors text-sm font-bold text-slate-600 dark:text-slate-300"><i class="fa-solid fa-check mr-1 text-emerald-500"></i> Feito</button></div></div>`;
+          container.innerHTML += `<div class="bg-white dark:bg-darkCard p-4 rounded-xl shadow-sm border border-brand-200 dark:border-brand-800 flex flex-col justify-between h-full relative overflow-hidden"><div class="absolute -right-4 -top-4 w-12 h-12 bg-brand-100 dark:bg-brand-900/30 rounded-full flex items-end justify-start p-2"><i class="fa-solid fa-star text-brand-500 text-[10px]"></i></div><div><div class="flex items-center gap-2 mb-2"><span class="w-3 h-3 rounded-full" style="background-color: ${materia.cor}"></span><span class="text-xs font-bold uppercase tracking-wider text-slate-500">${materia.nome}</span></div><h4 class="font-bold text-slate-800 dark:text-slate-200 mb-4 leading-tight pr-6">${t.nome}</h4></div><div class="flex justify-between items-center mt-auto border-t border-slate-100 dark:border-slate-800 pt-3"><span class="text-xs font-bold px-2 py-1 rounded-md border text-brand-600 bg-brand-50 border-brand-200 dark:text-brand-400 dark:bg-brand-900/30 dark:border-brand-800">Extra</span><button onclick="window.renderRevisoesPainel(); window.showToast('Revisão extra concluída! 🌟')" class="bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 px-3 py-1.5 rounded-lg transition-colors text-sm font-bold text-slate-600 dark:text-slate-300"><i class="fa-solid fa-check mr-1 text-emerald-500"></i> Feito</button></div></div>`;
         });
 
         emptyState.classList.add("hidden");
@@ -2481,13 +2502,13 @@
         triggerGamification();
       };
 
-      function renderRevisoesPainel() {
+      window.renderRevisoesPainel = function () {
         const container = document.getElementById("revisoes-lista-container");
         const emptyState = document.getElementById("revisoes-vazio");
         if (!container) return;
         container.innerHTML = "";
         let countRev = 0;
-        ORDEM_MATERIAS.forEach((mId) => {
+        window.ORDEM_MATERIAS.forEach((mId) => {
           const materia = window.editalState[mId];
           if (!materia || !materia.topicos) return;
           materia.topicos.forEach((t) => {
@@ -2531,13 +2552,13 @@
                 : el.classList.add("hidden");
           },
         );
-      }
+      };
 
       function renderEdital() {
         const container = document.getElementById("edital-container");
         if (!container) return;
         container.innerHTML = "";
-        ORDEM_MATERIAS.forEach((mId) => {
+        window.ORDEM_MATERIAS.forEach((mId) => {
           const materia = window.editalState[mId];
           if (!materia || !materia.topicos) return;
           let topicosHtml = "";
@@ -2556,7 +2577,7 @@
         container.innerHTML = "";
         let tTotal = 0,
           tConc = 0;
-        ORDEM_MATERIAS.forEach((mId) => {
+        window.ORDEM_MATERIAS.forEach((mId) => {
           const materia = window.editalState[mId];
           if (!materia || !materia.topicos) return;
           let mTotal = materia.topicos.length || 0;
@@ -2630,7 +2651,7 @@
           let labelsE = [],
             dataE = [],
             colorsE = [];
-          ORDEM_MATERIAS.forEach((k) => {
+          window.ORDEM_MATERIAS.forEach((k) => {
             const m = window.editalState[k];
             if (m && errorCount[k] > 0) {
               labelsE.push(m.nome);
@@ -2682,11 +2703,11 @@
           let labelsH = [],
             dataH = [],
             colorsH = [];
-          ORDEM_MATERIAS.forEach((k) => {
+          window.ORDEM_MATERIAS.forEach((k) => {
             if (hrCount[k] > 0) {
-              labelsH.push(EDITAL_TEMPLATE[k].nome);
+              labelsH.push(window.EDITAL_TEMPLATE[k].nome);
               dataH.push((hrCount[k] / 60).toFixed(1));
-              colorsH.push(EDITAL_TEMPLATE[k].cor);
+              colorsH.push(window.EDITAL_TEMPLATE[k].cor);
             }
           });
           if (hrCount["geral"] > 0) {
@@ -2763,7 +2784,7 @@
         );
         document.getElementById("erro-form").reset();
         window.toggleFormErro();
-        window.showToast("Tropeção registado!");
+        window.showToast("Tropeço registrado!");
         window.triggerActivity();
       };
 
@@ -2803,10 +2824,10 @@
         window.toggleIAModal();
         const contentDiv = document.getElementById("ia-content");
         contentDiv.innerHTML =
-          '<div class="py-12"><i class="fa-solid fa-circle-notch fa-spin text-brand-500 text-4xl mb-4"></i><p class="font-bold text-slate-500 animate-pulse">O Professor IA está a analisar o seu erro...</p></div>';
+          '<div class="py-12"><i class="fa-solid fa-circle-notch fa-spin text-brand-500 text-4xl mb-4"></i><p class="font-bold text-slate-500 animate-pulse">O Professor IA está analisando seu erro...</p></div>';
 
         try {
-          const promptText = `Aja como um professor especialista em concursos públicos (com foco no BACEN). O aluno errou uma questão de ${topico}. Pegadinha: "${pegadinha}". Regra correta: "${regra}". Crie uma explicação hiper simplificada de 1 parágrafo e, a seguir, crie uma mnemónica ou analogia super memorável para ele nunca mais errar. Responda em Português, direto ao ponto e formate com Markdown.`;
+          const promptText = `Aja como um professor especialista em concursos públicos (com foco no BACEN). O aluno errou uma questão de ${topico}. Pegadinha: "${pegadinha}". Regra correta: "${regra}". Crie uma explicação hiper simplificada de 1 parágrafo e, a seguir, crie uma mnemônica ou analogia super memorável para ele nunca mais errar. Responda em Português do Brasil, direto ao ponto e formate com Markdown.`;
           let attempt = 0;
           let success = false;
           const delays = [1000, 2000, 4000, 8000, 16000];
@@ -2840,7 +2861,7 @@
                 success = true;
                 return;
               } else {
-                throw new Error("Invalid response format");
+                throw new Error("Formato de resposta inválido.");
               }
             } catch (e) {
               if (attempt < 4)
@@ -2850,7 +2871,7 @@
           }
           if (!success) {
             contentDiv.innerHTML =
-              '<p class="text-red-500 font-bold">⚠️ Erro ao contactar o Professor IA. Tente mais tarde ou verifique a conexão.</p>';
+              '<p class="text-red-500 font-bold">⚠️ Erro ao contatar o Professor IA. Tente novamente mais tarde ou verifique a conexão.</p>';
           }
         } catch (e) {
           console.error(e);
@@ -2897,7 +2918,7 @@
           );
 
         if (errosFiltrados.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="4" class="px-5 py-8 text-center text-slate-400">Nenhum erro registado.</td></tr>`;
+          tbody.innerHTML = `<tr><td colspan="4" class="px-5 py-8 text-center text-slate-400">Nenhum erro registrado.</td></tr>`;
           return;
         }
 
@@ -2984,10 +3005,10 @@
         document.getElementById("bateria-form").reset();
         pacingSeconds = 0;
         document.getElementById("pacing-time").innerText = "00:00";
-        let msg = `Bateria registada!`;
+        let msg = `Bateria registrada!`;
         if (tempo > 0 && resolvidas > 0) {
           const segPorQ = Math.round((tempo * 60) / resolvidas);
-          msg = `Registo salvo! Média: ${segPorQ}s / questão.`;
+          msg = `Registro salvo! Média: ${segPorQ}s / questão.`;
         }
         window.showToast(msg);
         window.triggerActivity();
@@ -2998,12 +3019,12 @@
         if (!canvasAcertos) return;
         const ctx = canvasAcertos.getContext("2d");
         let stats = {};
-        ORDEM_MATERIAS.forEach((key) => {
+        window.ORDEM_MATERIAS.forEach((key) => {
           stats[key] = {
             resolvidas: 0,
             certas: 0,
-            nome: EDITAL_TEMPLATE[key].nome,
-            cor: EDITAL_TEMPLATE[key].cor,
+            nome: window.EDITAL_TEMPLATE[key].nome,
+            cor: window.EDITAL_TEMPLATE[key].cor,
           };
         });
         (window.baterias || []).forEach((b) => {
@@ -3016,7 +3037,7 @@
         let labels = [],
           data = [],
           colors = [];
-        ORDEM_MATERIAS.forEach((key) => {
+        window.ORDEM_MATERIAS.forEach((key) => {
           if (stats[key].resolvidas > 0) {
             labels.push(stats[key].nome);
             colors.push(stats[key].cor);
@@ -3171,12 +3192,12 @@
         );
         document.getElementById("simulado-form").reset();
         window.toggleFormSimulado();
-        window.showToast(`Registo salvo!`);
+        window.showToast(`Registro salvo!`);
         window.triggerActivity();
       };
 
       window.deletarSimulado = async function (id) {
-        if (confirm("Descartar este registo?")) {
+        if (confirm("Descartar este registro?")) {
           if (currentUser)
             await deleteDoc(
               doc(
@@ -3408,7 +3429,7 @@
         if (viewId === "edital") renderEdital();
         if (viewId === "simulados") renderSimulados();
         if (viewId === "flashcards") window.initFlashcards();
-        if (viewId === "revisoes") renderRevisoesPainel();
+        if (viewId === "revisoes") window.renderRevisoesPainel();
         if (viewId === "baterias") renderBaterias();
       };
 
@@ -3544,7 +3565,9 @@
             { disciplina: disc, minutos: minsSpent, createdAt: Date.now() },
           );
           if (!finished)
-            showToast(`Sessão interrompida. ${minsSpent} min registados.`);
+            window.showToast(
+              `Sessão interrompida. ${minsSpent} min registrados.`,
+            );
         }
         window.setPomodoroTempo(30);
       };
