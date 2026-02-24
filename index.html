@@ -1295,7 +1295,7 @@
           <div class="flex flex-wrap gap-3 no-print">
             <select
               id="filtro-disciplina"
-              onchange="renderTabelaErros()"
+              onchange="window.renderTabelaErros()"
               class="border border-slate-200 dark:border-slate-700 bg-white dark:bg-darkCard text-slate-700 dark:text-slate-300 rounded-xl px-4 py-2.5 text-sm font-semibold outline-none focus:ring-2 focus:ring-brand-500 shadow-sm"
             >
               <option value="todas">Todas as Disciplinas</option>
@@ -1327,9 +1327,6 @@
                 required
                 class="border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-brand-500"
               >
-                <option value="" disabled selected>
-                  Escolha a Disciplina...
-                </option>
                 <!-- Preenchido dinamicamente via JS -->
               </select>
               <input
@@ -1458,7 +1455,7 @@
           <div
             id="flashcard-container"
             class="relative w-full h-[350px] md:h-[400px] perspective mx-auto cursor-pointer"
-            onclick="flipCard()"
+            onclick="window.flipCard()"
           >
             <div
               id="flashcard-inner"
@@ -1507,7 +1504,7 @@
           <div class="grid grid-cols-3 gap-3 mt-6" id="flashcard-controls">
             <button
               onclick="
-                answerFlashcard(0);
+                window.answerFlashcard(0);
                 event.stopPropagation();
               "
               class="flex flex-col items-center justify-center py-3 bg-red-100 dark:bg-red-900/20 hover:bg-red-200 dark:hover:bg-red-900/40 text-red-700 dark:text-red-400 rounded-xl transition-colors border border-red-200 dark:border-red-800 shadow-sm"
@@ -1519,7 +1516,7 @@
             </button>
             <button
               onclick="
-                answerFlashcard(1);
+                window.answerFlashcard(1);
                 event.stopPropagation();
               "
               class="flex flex-col items-center justify-center py-3 bg-amber-100 dark:bg-amber-900/20 hover:bg-amber-200 dark:hover:bg-amber-900/40 text-amber-700 dark:text-amber-400 rounded-xl transition-colors border border-amber-200 dark:border-amber-800 shadow-sm"
@@ -1533,7 +1530,7 @@
             </button>
             <button
               onclick="
-                answerFlashcard(2);
+                window.answerFlashcard(2);
                 event.stopPropagation();
               "
               class="flex flex-col items-center justify-center py-3 bg-emerald-100 dark:bg-emerald-900/20 hover:bg-emerald-200 dark:hover:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400 rounded-xl transition-colors border border-emerald-200 dark:border-emerald-800 shadow-sm"
@@ -1564,7 +1561,7 @@
           </div>
           <div class="flex gap-2">
             <button
-              onclick="toggleHardcoreMode()"
+              onclick="window.toggleHardcoreMode()"
               class="bg-slate-800 hover:bg-slate-950 dark:hover:bg-black text-white px-5 py-2.5 rounded-xl shadow-md text-sm font-semibold transition-colors flex items-center gap-2 border border-slate-700"
             >
               <i class="fa-solid fa-skull text-red-500"></i> Modo Hardcore
@@ -2410,9 +2407,8 @@
       window.toggleTopico = async function (materiaId, topicoId, checkbox) {
         let newState = JSON.parse(JSON.stringify(window.editalState));
         const materia = newState[materiaId];
-        const topico = materia?.topicos?.find((t) => t.id === topicoId);
-        const prevConc =
-          materia?.topicos?.filter((t) => t.concluido).length || 0;
+        const topico = materia.topicos.find((t) => t.id === topicoId);
+        const prevConc = materia.topicos.filter((t) => t.concluido).length;
 
         if (topico) {
           topico.concluido = checkbox.checked;
@@ -2428,14 +2424,14 @@
             prevConc < materia.topicos.length
           ) {
             triggerGamification();
-            window.showToast(`Parabéns! Finalizou ${materia.nome}! 🏅`);
+            showToast(`Parabéns! Finalizou ${materia.nome}! 🏅`);
           }
         }
       };
 
       window.marcarRevisao = async function (materiaId, topicoId, tipo) {
         let newState = JSON.parse(JSON.stringify(window.editalState));
-        const topico = newState[materiaId]?.topicos?.find(
+        const topico = newState[materiaId].topicos.find(
           (t) => t.id === topicoId,
         );
         if (topico) {
@@ -2444,7 +2440,7 @@
           window.editalState = newState;
           await salvarEstadoNuvem("edital", window.editalState);
           if (topico.rev7 || topico.rev30) {
-            window.showToast(`Revisão registada! 🧠`);
+            showToast(`Revisão registada! 🧠`);
             window.triggerActivity();
           }
         }
@@ -2606,7 +2602,7 @@
         if (percMeta === 100 && !metaAtingidaHoje) {
           metaAtingidaHoje = true;
           triggerGamification();
-          showToast("Meta Diária Atingida! 🎯", "success");
+          window.showToast("Meta Diária Atingida! 🎯", "success");
         }
 
         // Banner de Domingo
@@ -2767,7 +2763,7 @@
         );
         document.getElementById("erro-form").reset();
         window.toggleFormErro();
-        showToast("Tropeção registado!");
+        window.showToast("Tropeção registado!");
         window.triggerActivity();
       };
 
@@ -2792,7 +2788,7 @@
         );
         e.target.reset();
         window.toggleQuickErrorModal();
-        showToast("Adicionado ao Caderno!", "success");
+        window.showToast("Adicionado ao Caderno!", "success");
         window.triggerActivity();
       };
 
@@ -2867,7 +2863,7 @@
           doc(db, "artifacts", appId, "users", currentUser.uid, "erros", id),
           { qtd: qtd + 1 },
         );
-        showToast("Anotado!", "error");
+        window.showToast("Anotado!", "error");
         window.triggerActivity();
       };
       window.deletarErro = async function (id) {
@@ -3175,7 +3171,7 @@
         );
         document.getElementById("simulado-form").reset();
         window.toggleFormSimulado();
-        showToast(`Registo salvo!`);
+        window.showToast(`Registo salvo!`);
         window.triggerActivity();
       };
 
@@ -3225,7 +3221,8 @@
         if (canvasSim) {
           const ctx = canvasSim.getContext("2d");
           const isDark = document.documentElement.classList.contains("dark");
-          if (window.charts.simulados) window.charts.simulados.destroy();
+          if (window.charts && window.charts.simulados)
+            window.charts.simulados.destroy();
           window.charts.simulados = new Chart(ctx, {
             type: "line",
             data: {
